@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { EditorTab, FileNode } from "@/types";
-import INTRODUCE_CONTENT from "@/data/content/introduce";
+import SELF_INTRO_CONTENT from "@/data/content/self_intro";
 
 interface EditorState {
   tabs: EditorTab[];
@@ -18,17 +18,17 @@ interface EditorState {
 }
 
 const DEFAULT_TAB: EditorTab = {
-  id: "introduce/소개.md",
-  name: "소개.md",
+  id: "자기소개.md",
+  name: "자기소개.md",
   language: "markdown",
-  content: INTRODUCE_CONTENT,
+  content: SELF_INTRO_CONTENT,
   isPreview: false,
 };
 
 export const useEditorStore = create<EditorState>()((set) => ({
   tabs: [DEFAULT_TAB],
   activeTabId: DEFAULT_TAB.id,
-  expandedFolders: new Set(["introduce"]),
+  expandedFolders: new Set<string>(),
 
   openFile: (node: FileNode) => {
     if (!node.content) return;

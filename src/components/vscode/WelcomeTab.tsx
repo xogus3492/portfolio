@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
-import { FILE_TREE } from "@/data/fileTree";
+import { FLAT_FILES } from "@/data/fileTree";
 import { FileNode } from "@/types";
 import { getFileIconColor } from "@/lib/utils";
 
@@ -63,7 +63,7 @@ function QuickLink({ node }: QuickLinkProps) {
 }
 
 export default function WelcomeTab() {
-  const allFiles = FILE_TREE.flatMap((folder) => folder.children ?? []);
+  const allFiles = FLAT_FILES;
 
   return (
     <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16">

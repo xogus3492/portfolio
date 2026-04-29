@@ -1,5 +1,5 @@
 import { FileNode } from "@/types";
-import INTRODUCE_CONTENT from "./content/introduce";
+import SELF_INTRO_CONTENT from "./content/self_intro";
 import {
   REHAB_CENTER_CONTENT,
   LITTLE_BANK_CONTENT,
@@ -10,22 +10,14 @@ import {
 import SKILLS_CONTENT from "./content/skills";
 import CAREER_CONTENT from "./content/career";
 import CERTIFICATE_CONTENT from "./content/certificate";
-import CONTACT_CONTENT from "./content/contact";
 
 export const FILE_TREE: FileNode[] = [
   {
-    id: "introduce",
-    name: "Introduce",
-    type: "folder",
-    children: [
-      {
-        id: "introduce/소개.md",
-        name: "소개.md",
-        type: "file",
-        language: "markdown",
-        content: INTRODUCE_CONTENT,
-      },
-    ],
+    id: "자기소개.md",
+    name: "자기소개.md",
+    type: "file",
+    language: "markdown",
+    content: SELF_INTRO_CONTENT,
   },
   {
     id: "career",
@@ -111,22 +103,8 @@ export const FILE_TREE: FileNode[] = [
       },
     ],
   },
-  {
-    id: "contact",
-    name: "Contact",
-    type: "folder",
-    children: [
-      {
-        id: "contact/연락처.md",
-        name: "연락처.md",
-        type: "file",
-        language: "markdown",
-        content: CONTACT_CONTENT,
-      },
-    ],
-  },
 ];
 
-export const FLAT_FILES: FileNode[] = FILE_TREE.flatMap(
-  (folder) => folder.children ?? []
+export const FLAT_FILES: FileNode[] = FILE_TREE.flatMap((node) =>
+  node.type === "folder" ? (node.children ?? []) : [node]
 );

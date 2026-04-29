@@ -49,13 +49,6 @@ DB       Oracle
 협업     Confluence, Bamboo, Bitbucket
 \`\`\`
 
----
-
-## 학력
-
-| 기간 | 기관 | 전공 |
-|------|------|------|
-| 2021.03 ~ 2023.02 | 동양미래대학교 | 컴퓨터정보공학과 |
 `;
 
 export default CAREER_CONTENT;
