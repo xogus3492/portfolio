@@ -8,11 +8,9 @@ import Breadcrumbs from "@/components/vscode/Breadcrumbs";
 import Editor from "@/components/vscode/Editor";
 import StatusBar from "@/components/vscode/StatusBar";
 import MobileHeader from "@/components/vscode/MobileHeader";
-import { useEditorStore } from "@/store/editorStore";
 import { useUIStore } from "@/store/uiStore";
 
 export default function Home() {
-  const { closeTab, activeTabId } = useEditorStore();
   const { toggleSidebar, setSidebarOpen } = useUIStore();
 
   useEffect(() => {
@@ -30,16 +28,11 @@ export default function Home() {
         e.preventDefault();
         toggleSidebar();
       }
-
-      if (e.key === "w") {
-        e.preventDefault();
-        if (activeTabId) closeTab(activeTabId);
-      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTabId, closeTab, toggleSidebar]);
+  }, [toggleSidebar]);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-vs-bg">
