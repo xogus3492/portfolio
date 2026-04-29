@@ -4,7 +4,7 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 
 ## 소개
 
-안녕하세요, **Back-end Engineer 장태현**입니다.
+안녕하세요, **Software Engineer 장태현**입니다.
 
 문제를 발견하고 해결하는 과정에서 깊이 몰입하는 개발자입니다.
 성능 최적화, 안정적인 서버 구조 설계, 실무 수준의 코드 품질을 추구합니다.

@@ -107,7 +107,7 @@ export default function WelcomeTab() {
             <div className="space-y-2 text-sm text-vs-text">
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
-                Back-end Engineer
+                Software Engineer
               </p>
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
