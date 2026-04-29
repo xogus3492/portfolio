@@ -46,42 +46,40 @@ export default function Editor() {
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden bg-vs-bg">
-      <div className="flex flex-1 overflow-y-auto overflow-x-hidden">
+    <div className="relative flex-1 overflow-y-auto overflow-x-hidden bg-vs-bg">
+      {/* absolute로 배치해 레이아웃 높이에 영향을 주지 않음 */}
+      <div
+        className="absolute top-0 left-0 pt-4 pr-4 text-right select-none pointer-events-none"
+        style={{ width: "3rem" }}
+        aria-hidden="true"
+      >
         <LineNumbers count={lineCount} />
+      </div>
 
-        <div
-          className="flex-1 min-w-0 pt-4 pb-16 pr-8 pl-4 overflow-x-hidden"
-        >
-          <div className="md-content max-w-none">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeHighlight]}
-              components={{
-                h1: ({ children }) => (
-                  <h1>{children}</h1>
-                ),
-                h2: ({ children }) => (
-                  <h2>{children}</h2>
-                ),
-                h3: ({ children }) => (
-                  <h3>{children}</h3>
-                ),
-                a: ({ href, children }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    {children}
-                  </a>
-                ),
-                table: ({ children }) => (
-                  <div className="overflow-x-auto mb-4">
-                    <table>{children}</table>
-                  </div>
-                ),
-              }}
-            >
-              {activeTab.content}
-            </ReactMarkdown>
-          </div>
+      {/* 콘텐츠가 스크롤 높이를 결정 */}
+      <div className="pt-4 pb-16 pr-8 overflow-x-hidden" style={{ paddingLeft: "3.5rem" }}>
+        <div className="md-content max-w-none">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+            components={{
+              h1: ({ children }) => <h1>{children}</h1>,
+              h2: ({ children }) => <h2>{children}</h2>,
+              h3: ({ children }) => <h3>{children}</h3>,
+              a: ({ href, children }) => (
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
+              table: ({ children }) => (
+                <div className="overflow-x-auto mb-4">
+                  <table>{children}</table>
+                </div>
+              ),
+            }}
+          >
+            {activeTab.content}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
