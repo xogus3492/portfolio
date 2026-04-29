@@ -45,9 +45,9 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
           </span>
           <span className="shrink-0">
             {isExpanded ? (
-              <FolderOpen size={16} className="text-vs-icon-yellow" />
+              <FolderOpen size={16} className="text-vs-text-muted" />
             ) : (
-              <Folder size={16} className="text-vs-icon-yellow" />
+              <Folder size={16} className="text-vs-text-muted" />
             )}
           </span>
           <span className="truncate">{node.name}</span>
