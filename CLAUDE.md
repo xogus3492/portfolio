@@ -64,6 +64,7 @@ Whenever you modify existing code:
 
 ## Git Commit Rules
 
+- Unless otherwise specified, create separate commits for each completed task.
 - Write commit messages in Korean
 - Commit message format:
 
