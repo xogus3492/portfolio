@@ -6,9 +6,10 @@ import { getFileIconColor } from "@/lib/utils";
 
 const FOLDER_LABELS: Record<string, string> = {
   introduce: "Introduce",
+  career: "Career",
   projects: "Projects",
   skills: "Skills",
-  experience: "Experience",
+  certificate: "Certificate",
   contact: "Contact",
 };
 

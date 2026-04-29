@@ -7,7 +7,8 @@ import { FILE_TREE } from "@/data/fileTree";
 import { FileNode } from "@/types";
 import { getFileIconColor } from "@/lib/utils";
 
-const TYPING_TEXT = "Full-Stack Developer · Building things that matter";
+const TYPING_TEXT =
+  "한 번 빠지면 시간 가는 줄 모르는, 개발이란 저에게 그런 존재입니다.";
 
 function TypingAnimation() {
   const [displayed, setDisplayed] = useState("");
@@ -22,7 +23,7 @@ function TypingAnimation() {
       } else {
         clearInterval(typingInterval);
       }
-    }, 60);
+    }, 55);
 
     const cursorInterval = setInterval(() => {
       setShowCursor((v) => !v);
@@ -69,16 +70,19 @@ export default function WelcomeTab() {
       <div className="w-full max-w-2xl">
         <div className="mb-12">
           <pre className="text-vs-accent text-xs leading-tight font-mono mb-6 hidden sm:block">
-{`██████╗  ██████╗ ██████╗ ████████╗███████╗ ██████╗ ██╗      ██╗ ██████╗
-██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██║      ██║██╔═══██╗
-██████╔╝██║   ██║██████╔╝   ██║   █████╗  ██║   ██║██║      ██║██║   ██║
-██╔═══╝ ██║   ██║██╔══██╗   ██║   ██╔══╝  ██║   ██║██║      ██║██║   ██║
-██║     ╚██████╔╝██║  ██║   ██║   ██║     ╚██████╔╝███████╗ ██║╚██████╔╝
-╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚══════╝ ╚═╝ ╚═════╝`}
+{`████████╗ █████╗ ███████╗██╗  ██╗██╗   ██╗███████╗ ██████╗ ███╗   ██╗
+╚══██╔══╝██╔══██╗██╔════╝██║  ██║╚██╗ ██╔╝██╔════╝██╔═══██╗████╗  ██║
+   ██║   ███████║█████╗  ███████║ ╚████╔╝ █████╗  ██║   ██║██╔██╗ ██║
+   ██║   ██╔══██║██╔══╝  ██╔══██║  ╚██╔╝  ██╔══╝  ██║   ██║██║╚██╗██║
+   ██║   ██║  ██║███████╗██║  ██║   ██║   ███████╗╚██████╔╝██║ ╚████║
+   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝`}
           </pre>
 
           <h1 className="text-3xl font-bold text-vs-text-active mb-2">
-            장태현 <span className="text-vs-text-muted font-normal text-2xl">(Jang Taehyeon)</span>
+            장태현{" "}
+            <span className="text-vs-text-muted font-normal text-2xl">
+              (Jang Taehyeon)
+            </span>
           </h1>
 
           <TypingAnimation />
@@ -103,15 +107,19 @@ export default function WelcomeTab() {
             <div className="space-y-2 text-sm text-vs-text">
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
-                웹 애플리케이션 개발자
+                Back-end Engineer
               </p>
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
-                Next.js · TypeScript · Node.js
+                Spring Boot · JPA · MySQL · Redis
               </p>
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
                 Seoul, South Korea
+              </p>
+              <p>
+                <span className="text-vs-accent">{">"}</span>{" "}
+                현대백화점 플랫폼 개발 (재직중)
               </p>
             </div>
 
@@ -121,11 +129,15 @@ export default function WelcomeTab() {
               </h2>
               <div className="space-y-1 text-xs text-vs-text-muted">
                 <p>
-                  <kbd className="bg-vs-active px-1 rounded text-vs-text">Ctrl+B</kbd>{" "}
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">
+                    Ctrl+B
+                  </kbd>{" "}
                   사이드바 토글
                 </p>
                 <p>
-                  <kbd className="bg-vs-active px-1 rounded text-vs-text">Ctrl+W</kbd>{" "}
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">
+                    Ctrl+W
+                  </kbd>{" "}
                   탭 닫기
                 </p>
                 <p>파일을 더블클릭하면 탭이 고정됩니다.</p>

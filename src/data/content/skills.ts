@@ -1,55 +1,67 @@
 const SKILLS_CONTENT = `# 기술 스택 (Skills)
 
-> 지속적으로 배우고 성장하는 개발자입니다.
+## Back-end
 
-## Frontend
+| 기술 | 설명 |
+|------|------|
+| Spring Boot | REST API 설계 및 개발, 서비스 레이어 구조 설계 |
+| Spring Security | 인증/인가, JWT 기반 보안 처리 |
+| JPA | ORM 기반 데이터 접근, 연관관계 설계 |
+| QueryDSL | 타입 안전한 동적 쿼리 작성 |
+| MyBatis | XML 기반 SQL 매핑 |
+| Spring (Legacy) | JSP 기반 MVC 패턴 개발 |
 
-| 기술 | 숙련도 | 설명 |
-|------|--------|------|
-| React | ⭐⭐⭐⭐⭐ | Hooks, Context, 상태 관리 패턴 숙지 |
-| Next.js | ⭐⭐⭐⭐⭐ | App Router, SSR/SSG/ISR, 최적화 |
-| TypeScript | ⭐⭐⭐⭐⭐ | 고급 타입, 제네릭, 타입 가드 |
-| Tailwind CSS | ⭐⭐⭐⭐⭐ | 커스텀 테마, 반응형 설계 |
-| Zustand | ⭐⭐⭐⭐ | 상태 관리, 미들웨어 |
-| React Query | ⭐⭐⭐⭐ | 서버 상태 관리, 캐싱 전략 |
+## Front-end
 
-## Backend
+| 기술 | 설명 |
+|------|------|
+| Next.js | App Router, SSR/SSG, 풀스택 개발 |
+| React | Hooks, 컴포넌트 기반 UI 개발 |
+| TypeScript | 정적 타입 기반 안전한 코드 작성 |
+| Tailwind CSS | 유틸리티 퍼스트 스타일링 |
+| ESLint | 코드 품질 관리 |
 
-| 기술 | 숙련도 | 설명 |
-|------|--------|------|
-| Node.js | ⭐⭐⭐⭐⭐ | Event loop, 스트림, 비동기 패턴 |
-| NestJS | ⭐⭐⭐⭐ | DI, 모듈 시스템, 데코레이터 |
-| PostgreSQL | ⭐⭐⭐⭐ | 쿼리 최적화, 인덱싱, 트랜잭션 |
-| Redis | ⭐⭐⭐ | 캐싱, 세션 관리, Pub/Sub |
-| MongoDB | ⭐⭐⭐ | 집계 파이프라인, 스키마 설계 |
-| REST API | ⭐⭐⭐⭐⭐ | RESTful 설계, OpenAPI 문서화 |
+## Database
 
-## DevOps & Infrastructure
+| 기술 | 설명 |
+|------|------|
+| MySQL | 주력 RDBMS, 쿼리 최적화 경험 |
+| Oracle | 레거시 시스템 운영 경험 |
+| Redis | 캐싱, 세션 관리, 성능 개선에 활용 |
+| H2 | 테스트 환경 인메모리 DB |
 
-| 기술 | 숙련도 | 설명 |
-|------|--------|------|
-| Docker | ⭐⭐⭐⭐ | 멀티 스테이지 빌드, Compose |
-| AWS | ⭐⭐⭐ | EC2, S3, CloudFront, ECS |
-| GitHub Actions | ⭐⭐⭐⭐ | CI/CD 파이프라인 구축 |
-| Nginx | ⭐⭐⭐ | 리버스 프록시, 로드밸런싱 |
-| Vercel | ⭐⭐⭐⭐⭐ | 배포, 환경 변수, Edge Functions |
+## DevOps / Infra
 
-## Tools & Practices
+| 기술 | 설명 |
+|------|------|
+| Docker | 컨테이너 기반 환경 구성 |
+| Nginx | 리버스 프록시, 로드밸런싱 |
+| AWS EC2 | 서버 배포 및 운영 |
+| AWS RDS | 관리형 데이터베이스 운영 |
+| AWS S3 | 파일 스토리지 |
+| AWS CodeDeploy | 자동 배포 파이프라인 |
+| GitHub Actions | CI/CD 파이프라인 구축 |
+| Confluence | 팀 문서화 |
+| Bamboo | CI 빌드 자동화 |
+| Bitbucket | 형상관리 |
+
+## Mobile
+
+| 기술 | 설명 |
+|------|------|
+| Android (Java) | Android 네이티브 앱 개발 |
+| Retrofit2 | REST API 클라이언트 |
+| OkHttp3 | HTTP 통신, 인터셉터 처리 |
+| Gson | JSON 직렬화/역직렬화 |
+
+## Tools
 
 \`\`\`
-📦 패키지 관리      npm, yarn, pnpm
-🧪 테스팅           Jest, Testing Library, Playwright
-📝 문서화           Swagger/OpenAPI, Storybook
-🔍 코드 품질        ESLint, Prettier, Husky
-📊 모니터링         Sentry, Prometheus, Grafana
-🗂️ 버전 관리        Git, GitHub, GitFlow
+📄 문서화    Swagger, Confluence
+🧪 성능테스트  JMeter
+🤖 AI 도구   Cursor
+🚀 배포      Vercel
 \`\`\`
-
-## 현재 학습 중
-
-- **Rust** - 시스템 프로그래밍, WebAssembly
-- **Go** - 마이크로서비스, 고성능 서버
-- **Kubernetes** - 컨테이너 오케스트레이션
 `;
 
 export default SKILLS_CONTENT;

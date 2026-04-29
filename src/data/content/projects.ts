@@ -1,176 +1,181 @@
-export const E_COMMERCE_CONTENT = `# E-Commerce Platform
+export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 
-> 대규모 트래픽을 처리하는 풀스택 이커머스 플랫폼
+**기간:** 2026.01 ~ 진행중 &nbsp;&nbsp; **유형:** 개인 프로젝트 (외주)
 
-## 개요
-
-MSA(Microservices Architecture) 기반의 이커머스 플랫폼입니다.
-상품 관리, 주문 처리, 결제 연동, 사용자 인증 등 핵심 기능을 구현했습니다.
-
-## 주요 기능
-
-- 상품 검색 및 필터링 (Elasticsearch)
-- 실시간 재고 관리
-- 결제 연동 (포트원 API)
-- JWT 기반 인증/인가
-- 관리자 대시보드
+> 홈페이지 제작 외주 개인 프로젝트
 
 ## 기술 스택
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | Next.js 14, TypeScript, Tailwind CSS |
-| Backend | NestJS, PostgreSQL, Redis |
-| Infrastructure | Docker, AWS EC2, S3, CloudFront |
-| Monitoring | Prometheus, Grafana |
+| Frontend | Next.js, React, TypeScript, Tailwind CSS, ESLint |
+| 도구 | Cursor, Vercel |
 
-## 성과
+## 주요 기여
 
-- 동시 접속자 1,000명 처리 성능 달성
-- 페이지 로드 시간 40% 단축 (Core Web Vitals 최적화)
-- 테스트 커버리지 85% 달성
+- **Notion MCP Server 활용 자동화 프로세스 구축**
+  - 고객이 RFP 작성 → Agent가 추가된 요구사항 감지 → 검증 및 소스코드 반영
+  - 요구사항 변경 대응 프로세스를 자동화하여 개발 생산성 향상
 
 ## 링크
 
-- 🔗 [GitHub Repository](https://github.com)
-- 🚀 [Live Demo](https://example.com)
+- 🔗 [GitHub](https://github.com/xogus3492/sm-rehabilitation-center-website)
+- 🚀 [Live Site](https://sm-rehabilitation-center.vercel.app/)
+`;
 
-\`\`\`typescript
-// 상품 검색 API 예시
-async function searchProducts(query: SearchQuery): Promise<Product[]> {
-  const result = await elasticsearch.search({
-    index: 'products',
-    body: {
-      query: {
-        multi_match: {
-          query: query.keyword,
-          fields: ['name^3', 'description', 'category'],
-        },
-      },
-    },
-  });
-  return result.hits.hits.map((hit) => hit._source as Product);
-}
+export const LITTLE_BANK_CONTENT = `# 리틀뱅크 ⭐
+
+**기간:** 2025.03 ~ 2025.07 &nbsp;&nbsp; **유형:** 팀 프로젝트
+
+> 아이들의 학습동기 부여 어플
+
+## 팀 구성 & 역할
+
+| 구성 | 역할 |
+|------|------|
+| App(PM) 1명, Back-end 2명, Design 1명 | **Back-end, PL** |
+
+## 기술 스택
+
+| 영역 | 기술 |
+|------|------|
+| Backend | Spring Boot, JPA, QueryDSL |
+| Database | MySQL, Redis |
+| Infra | Nginx, Docker, AWS EC2/RDS/S3/CodeDeploy |
+| CI/CD | GitHub Actions |
+| 문서화 | Swagger |
+
+## 주요 기여
+
+### 1. CI/CD 파이프라인 구축
+
+GitHub Actions + CodeDeploy를 활용한 자동 배포 환경 구성으로
+배포 과정 자동화 및 운영 편의성 개선
+
+### 2. 채팅방 API 구조 개선
+
+클라이언트에서 처리하던 채팅방 정렬·읽음 상태를
+BFF(Backend For Frontend) 관점의 API로 분리하여 클라이언트 부하 감소
+
+### 3. 결제 위변조 방지 플로우 구현
+
+Toss Payments API 기반으로
+결제 전 정보를 서버에 저장 → 승인 후 비교 검증하는 플로우를 설계하여 위변조 방지
+
+## 링크
+
+- 🔗 [GitHub](https://github.com/little-bank/littlebank-server)
+`;
+
+export const DEVHUB_CONTENT = `# DEVHUB
+
+**기간:** 2024.07 ~ 2024.10 &nbsp;&nbsp; **유형:** 팀 프로젝트
+
+> 초보 개발자를 위한 프로젝트 형상관리 서비스
+
+## 팀 구성 & 역할
+
+| 구성 | 역할 |
+|------|------|
+| Front-end 2명, Back-end 3명 | **Back-end, PL** |
+
+## 기술 스택
+
+| 영역 | 기술 |
+|------|------|
+| Backend | Spring Boot, JPA, Spring Security, JWT |
+| Database | MySQL, Redis |
+| Infra | Nginx, Docker, AWS |
+
+## 주요 기여
+
+### 1. 이메일 발신 기능 성능 개선
+
 \`\`\`
+개선 전: 4,159ms
+개선 후:    17ms
+\`\`\`
+
+동기 처리 → 비동기 처리로 전환하여 응답 시간 **99% 단축**
+
+### 2. 형상관리 전략 설계
+
+Snapshot 방식 vs Git 방식의 트레이드오프를 분석하여 최적 전략 채택
+
+### 3. 동시 저장 방지
+
+DB 락(Lock)을 활용하여 동시 요청에 의한 데이터 정합성 문제 해결
+
+## 링크
+
+- 🔗 [GitHub](https://github.com/Devs-Of-Kosmo/devhub-server)
+- 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
-export const CHAT_APP_CONTENT = `# Real-time Chat Application
+export const BOARD_CONTENT = `# 게시판 프로젝트
 
-> WebSocket 기반 실시간 채팅 애플리케이션
+**기간:** 2023.03 ~ 2023.05 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
-## 개요
+> 서비스 최적화를 통한 실무 수준 개발 프로젝트
 
-Socket.io를 활용한 실시간 채팅 서비스입니다.
-1:1 채팅, 그룹 채팅, 파일 공유 기능을 지원합니다.
+## 팀 구성 & 역할
 
-## 주요 기능
-
-- 실시간 메시지 전송/수신
-- 읽음 확인 기능
-- 파일/이미지 첨부 (AWS S3)
-- 온라인 상태 표시
-- 메시지 검색
+| 구성 | 역할 |
+|------|------|
+| Leader 1명, Back-end 2명 | **Back-end** |
 
 ## 기술 스택
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | React, TypeScript, Zustand |
-| Backend | Node.js, Socket.io, MongoDB |
-| Infrastructure | Docker, AWS ECS |
-| CDN | CloudFront |
+| Backend | Spring Boot, JPA, Querydsl |
+| Database | H2, Redis |
 
-## 성과
+## 트러블 슈팅
 
-- 실시간 메시지 지연 시간 < 50ms
-- 동시 접속 500명 안정적 처리
-- 메시지 전달 성공률 99.9%
+### 1. JPA N+1 문제 해결
+
+연관 엔티티 조회 시 발생하는 N+1 문제를 **Fetch Join**으로 해결하여
+쿼리 수를 N+1개 → 1개로 최적화
+
+### 2. 좋아요 기능 동시성 문제 해결
+
+다수의 사용자가 동시에 좋아요를 누르는 상황에서
+**비관적 락(Pessimistic Lock)** 을 적용하여 데이터 정합성 보장
 
 ## 링크
 
-- 🔗 [GitHub Repository](https://github.com)
-- 🚀 [Live Demo](https://example.com)
+- 🔗 [GitHub](https://github.com/Cupid-Arrow-team/Board/tree/develop)
 `;
 
-export const TASK_MANAGER_CONTENT = `# Task Manager (칸반 보드)
+export const FYB_CONTENT = `# FYB (Fit Your Balance)
 
-> 팀 협업을 위한 프로젝트 관리 도구
+**기간:** 2022.03 ~ 2022.11 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
-## 개요
+> 빅데이터 기반 개인 맞춤형 쇼핑몰 추천 서비스
 
-드래그 앤 드롭 기반의 칸반 보드 프로젝트 관리 도구입니다.
-팀 단위로 태스크를 관리하고 진행 상황을 추적할 수 있습니다.
+## 팀 구성 & 역할
 
-## 주요 기능
-
-- 드래그 앤 드롭 태스크 이동 (dnd-kit)
-- 실시간 공동 편집 (CRDT)
-- 태스크 댓글 및 멘션
-- 마감일 알림 (SSE)
-- 통계 대시보드
+| 구성 | 역할 |
+|------|------|
+| Back-end 1명, Android 1명, Design 2명 | **Android** |
 
 ## 기술 스택
 
 | 영역 | 기술 |
 |------|------|
-| Frontend | Next.js, TypeScript, Tailwind CSS, dnd-kit |
-| Backend | NestJS, PostgreSQL, Redis |
-| Auth | NextAuth.js |
-| Testing | Jest, Playwright |
+| Mobile | Android, Java |
+| 네트워크 | Retrofit2, OkHttp3, Gson |
 
-## 성과
+## 주요 기여
 
-- E2E 테스트 100% 자동화
-- 라이트하우스 점수 95+ 달성
-- 모바일 반응형 완벽 지원
-
-## 링크
-
-- 🔗 [GitHub Repository](https://github.com)
-- 🚀 [Live Demo](https://example.com)
-`;
-
-export const PORTFOLIO_CONTENT = `# Portfolio Website (이 사이트)
-
-> VSCode IDE 테마 기반 개인 포트폴리오 웹사이트
-
-## 개요
-
-VSCode IDE UI를 충실히 재현한 개인 포트폴리오 사이트입니다.
-파일 탐색기, 에디터 탭, 마크다운 렌더링 등 VSCode의 핵심 UI를 구현했습니다.
-
-## 주요 기능
-
-- VSCode 파일 탐색기 UI
-- 멀티 탭 에디터 (미리보기/고정 탭)
-- 마크다운 렌더링 (코드 하이라이팅 포함)
-- Breadcrumbs 네비게이션
-- 반응형 레이아웃 (모바일 지원)
-- 키보드 단축키 (Ctrl+B, Ctrl+W)
-
-## 기술 스택
-
-| 영역 | 기술 |
-|------|------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| State | Zustand v5 |
-| Markdown | react-markdown, remark-gfm, rehype-highlight |
-| Icons | lucide-react |
-
-## 설계 결정
-
-**왜 Zustand?**
-탭 상태는 ActivityBar, Sidebar, TabBar, Editor, StatusBar 등 5개 이상의 컴포넌트가 구독합니다.
-Context API 대비 불필요한 리렌더링을 최소화할 수 있어 선택했습니다.
-
-**왜 App Router?**
-Server Component로 정적 컨텐츠를 처리하고,
-Client Component를 상호작용이 필요한 부분으로 최소화했습니다.
+- Retrofit2 기반 REST API 클라이언트 구현
+- OkHttp3 인터셉터를 활용한 공통 헤더 처리
+- Gson을 사용한 JSON 직렬화/역직렬화 처리
+- 빅데이터 추천 결과를 Android UI에 연동
 
 ## 링크
 
-- 🔗 [GitHub Repository](https://github.com)
-- 🚀 [Live Demo](https://taehyeon-portfolio.com)
+- 🔗 [GitHub](https://github.com/xogus3492/Front_Android)
+- 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
 `;

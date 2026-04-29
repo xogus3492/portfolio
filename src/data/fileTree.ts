@@ -1,13 +1,15 @@
 import { FileNode } from "@/types";
 import INTRODUCE_CONTENT from "./content/introduce";
 import {
-  E_COMMERCE_CONTENT,
-  CHAT_APP_CONTENT,
-  TASK_MANAGER_CONTENT,
-  PORTFOLIO_CONTENT,
+  REHAB_CENTER_CONTENT,
+  LITTLE_BANK_CONTENT,
+  DEVHUB_CONTENT,
+  BOARD_CONTENT,
+  FYB_CONTENT,
 } from "./content/projects";
 import SKILLS_CONTENT from "./content/skills";
-import EXPERIENCE_CONTENT from "./content/experience";
+import CAREER_CONTENT from "./content/career";
+import CERTIFICATE_CONTENT from "./content/certificate";
 import CONTACT_CONTENT from "./content/contact";
 
 export const FILE_TREE: FileNode[] = [
@@ -26,37 +28,58 @@ export const FILE_TREE: FileNode[] = [
     ],
   },
   {
+    id: "career",
+    name: "Career",
+    type: "folder",
+    children: [
+      {
+        id: "career/경력.md",
+        name: "경력.md",
+        type: "file",
+        language: "markdown",
+        content: CAREER_CONTENT,
+      },
+    ],
+  },
+  {
     id: "projects",
     name: "Projects",
     type: "folder",
     children: [
       {
-        id: "projects/E-Commerce.md",
-        name: "E-Commerce.md",
+        id: "projects/재활센터-홈페이지.md",
+        name: "재활센터-홈페이지.md",
         type: "file",
         language: "markdown",
-        content: E_COMMERCE_CONTENT,
+        content: REHAB_CENTER_CONTENT,
       },
       {
-        id: "projects/Chat-App.md",
-        name: "Chat-App.md",
+        id: "projects/리틀뱅크.md",
+        name: "리틀뱅크.md",
         type: "file",
         language: "markdown",
-        content: CHAT_APP_CONTENT,
+        content: LITTLE_BANK_CONTENT,
       },
       {
-        id: "projects/Task-Manager.md",
-        name: "Task-Manager.md",
+        id: "projects/DEVHUB.md",
+        name: "DEVHUB.md",
         type: "file",
         language: "markdown",
-        content: TASK_MANAGER_CONTENT,
+        content: DEVHUB_CONTENT,
       },
       {
-        id: "projects/Portfolio-v2.md",
-        name: "Portfolio-v2.md",
+        id: "projects/게시판.md",
+        name: "게시판.md",
         type: "file",
         language: "markdown",
-        content: PORTFOLIO_CONTENT,
+        content: BOARD_CONTENT,
+      },
+      {
+        id: "projects/FYB.md",
+        name: "FYB.md",
+        type: "file",
+        language: "markdown",
+        content: FYB_CONTENT,
       },
     ],
   },
@@ -75,16 +98,16 @@ export const FILE_TREE: FileNode[] = [
     ],
   },
   {
-    id: "experience",
-    name: "Experience",
+    id: "certificate",
+    name: "Certificate",
     type: "folder",
     children: [
       {
-        id: "experience/경력.md",
-        name: "경력.md",
+        id: "certificate/자격증.md",
+        name: "자격증.md",
         type: "file",
         language: "markdown",
-        content: EXPERIENCE_CONTENT,
+        content: CERTIFICATE_CONTENT,
       },
     ],
   },
