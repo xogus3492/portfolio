@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, X, FileText } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import FileIcon from "./FileIcon";
 import { useUIStore } from "@/store/uiStore";
 import { useEditorStore } from "@/store/editorStore";
 
@@ -21,7 +22,7 @@ export default function MobileHeader() {
 
       {activeTab && (
         <div className="flex items-center gap-2 min-w-0">
-          <FileText size={14} style={{ color: "#8dc149" }} className="shrink-0" />
+          <FileIcon id={activeTab.id} language={activeTab.language} iconUrl={activeTab.iconUrl} size={14} />
           <span className="text-sm text-vs-text truncate">{activeTab.name}</span>
         </div>
       )}

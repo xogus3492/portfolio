@@ -5,11 +5,11 @@ import {
   ChevronDown,
   Folder,
   FolderOpen,
-  FileText,
 } from "lucide-react";
 import { FileNode } from "@/types";
 import { useEditorStore } from "@/store/editorStore";
-import { cn, getFileIconColor } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import FileIcon from "./FileIcon";
 
 interface FileTreeNodeProps {
   node: FileNode;
@@ -64,8 +64,6 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
     );
   }
 
-  const iconColor = getFileIconColor(node.language ?? "plaintext");
-
   return (
     <button
       onClick={() => openFile(node)}
@@ -76,7 +74,7 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
       )}
       style={{ paddingLeft: paddingLeft + 20 }}
     >
-      <FileText size={15} style={{ color: iconColor, flexShrink: 0 }} />
+      <FileIcon id={node.id} language={node.language} iconUrl={node.iconUrl} size={15} />
       <span className="truncate">{node.name}</span>
     </button>
   );

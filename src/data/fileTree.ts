@@ -44,6 +44,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: REHAB_CENTER_CONTENT,
+        iconUrl: "/icons/house-icon.png",
       },
       {
         id: "projects/리틀뱅크.md",
@@ -51,6 +52,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: LITTLE_BANK_CONTENT,
+        iconUrl: "/icons/littlebank-icon.png",
       },
       {
         id: "projects/DEVHUB.md",
@@ -58,6 +60,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: DEVHUB_CONTENT,
+        iconUrl: "/icons/devhub-icon.png",
       },
       {
         id: "projects/게시판.md",
@@ -65,6 +68,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: BOARD_CONTENT,
+        iconUrl: "/icons/board-icon.png",
       },
       {
         id: "projects/FYB.md",
@@ -72,6 +76,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: FYB_CONTENT,
+        iconUrl: "/icons/fyb-icon.png",
       },
     ],
   },

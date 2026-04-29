@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { X, FileText } from "lucide-react";
+import { X } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
 import { EditorTab } from "@/types";
-import { cn, getFileIconColor } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import FileIcon from "./FileIcon";
 
 interface TabItemProps {
   tab: EditorTab;
@@ -13,7 +14,6 @@ interface TabItemProps {
 
 function TabItem({ tab, isActive }: TabItemProps) {
   const { setActiveTab, closeTab, pinTab } = useEditorStore();
-  const iconColor = getFileIconColor(tab.language);
 
   return (
     <div
@@ -27,11 +27,7 @@ function TabItem({ tab, isActive }: TabItemProps) {
       onClick={() => setActiveTab(tab.id)}
       onDoubleClick={() => pinTab(tab.id)}
     >
-      <FileText
-        size={14}
-        style={{ color: iconColor }}
-        className="shrink-0"
-      />
+      <FileIcon id={tab.id} language={tab.language} iconUrl={tab.iconUrl} size={14} />
       <span
         className={cn(
           "text-sm truncate max-w-32",

@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
 import { FLAT_FILES } from "@/data/fileTree";
 import { FileNode } from "@/types";
-import { getFileIconColor } from "@/lib/utils";
+import FileIcon from "./FileIcon";
 
 const TYPING_TEXT =
   "한 번 빠지면 시간 가는 줄 모르는, 개발이란 저에게 그런 존재입니다.";
@@ -49,7 +48,6 @@ interface QuickLinkProps {
 
 function QuickLink({ node }: QuickLinkProps) {
   const { openFile } = useEditorStore();
-  const iconColor = getFileIconColor(node.language ?? "plaintext");
 
   const parts = node.id.split("/");
   const folderName = parts.length > 1 ? parts[0] : null;
@@ -59,7 +57,7 @@ function QuickLink({ node }: QuickLinkProps) {
       onClick={() => openFile(node)}
       className="flex items-center gap-2 px-3 py-1.5 rounded text-sm hover:bg-vs-hover transition-colors cursor-pointer w-full text-left"
     >
-      <FileText size={14} style={{ color: iconColor }} className="shrink-0" />
+      <FileIcon id={node.id} language={node.language} iconUrl={node.iconUrl} size={14} />
       <span className="flex items-center gap-1 min-w-0">
         {folderName && (
           <>
@@ -147,7 +145,7 @@ export default function WelcomeTab() {
                 </p>
                 <p>
                   <kbd className="bg-vs-active px-1 rounded text-vs-text">
-                    Ctrl+W
+                    Alt+W
                   </kbd>{" "}
                   탭 닫기
                 </p>

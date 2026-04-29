@@ -36,6 +36,7 @@ export const useEditorStore = create<EditorState>()((set) => ({
         language: node.language ?? "plaintext",
         content: node.content!,
         isPreview: true,
+        iconUrl: node.iconUrl,
       };
 
       if (previewIdx >= 0) {

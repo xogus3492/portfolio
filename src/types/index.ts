@@ -6,6 +6,7 @@ export interface FileNode {
   type: FileNodeType;
   language?: string;
   content?: string;
+  iconUrl?: string;
   children?: FileNode[];
 }
 
@@ -15,6 +16,7 @@ export interface EditorTab {
   language: string;
   content: string;
   isPreview: boolean;
+  iconUrl?: string;
 }
 
 export type ActivityPanel = "explorer" | "search" | "git" | "extensions";

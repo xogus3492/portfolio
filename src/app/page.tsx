@@ -9,9 +9,11 @@ import Editor from "@/components/vscode/Editor";
 import StatusBar from "@/components/vscode/StatusBar";
 import MobileHeader from "@/components/vscode/MobileHeader";
 import { useUIStore } from "@/store/uiStore";
+import { useEditorStore } from "@/store/editorStore";
 
 export default function Home() {
   const { toggleSidebar, setSidebarOpen } = useUIStore();
+  const { closeTab, activeTabId } = useEditorStore();
 
   useEffect(() => {
     if (window.innerWidth < 1024) {
@@ -21,6 +23,12 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === "w") {
+        e.preventDefault();
+        if (activeTabId) closeTab(activeTabId);
+        return;
+      }
+
       const isMod = e.metaKey || e.ctrlKey;
       if (!isMod) return;
 
@@ -32,7 +40,7 @@ export default function Home() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar]);
+  }, [activeTabId, closeTab, toggleSidebar]);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-vs-bg">
