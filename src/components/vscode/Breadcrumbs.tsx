@@ -1,8 +1,8 @@
 "use client";
 
-import { ChevronRight, FileText } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
-import { getFileIconColor } from "@/lib/utils";
+import FileIcon from "./FileIcon";
 
 const FOLDER_LABELS: Record<string, string> = {
   career: "Career",
@@ -19,7 +19,6 @@ export default function Breadcrumbs() {
 
   const parts = activeTab.id.split("/");
   const isRootFile = parts.length === 1;
-  const iconColor = getFileIconColor(activeTab.language);
 
   return (
     <div className="flex items-center gap-1 h-7 px-3 bg-vs-bg border-b border-vs-border-subtle shrink-0 overflow-hidden">
@@ -36,7 +35,7 @@ export default function Breadcrumbs() {
       )}
 
       <span className="flex items-center gap-1 text-xs text-vs-text truncate">
-        <FileText size={12} style={{ color: iconColor }} className="shrink-0" />
+        <FileIcon id={activeTab.id} language={activeTab.language} iconUrl={activeTab.iconUrl} size={12} />
         <span className="truncate">{parts[parts.length - 1]}</span>
       </span>
     </div>
