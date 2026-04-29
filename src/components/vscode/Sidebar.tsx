@@ -35,7 +35,8 @@ export default function Sidebar() {
 
       <aside className="flex flex-col w-60 shrink-0 bg-vs-sidebar border-r border-vs-border-subtle overflow-hidden select-none
                         fixed top-11 left-0 bottom-6 z-30
-                        lg:relative lg:top-auto lg:left-auto lg:bottom-auto lg:z-auto">
+                        lg:relative lg:top-auto lg:left-auto lg:bottom-auto lg:z-auto
+                        animate-[slideIn_0.18s_ease-out]">
         <div className="flex items-center h-9 px-5 shrink-0">
           <span className="text-xs text-vs-text-muted font-semibold tracking-widest uppercase">
             {title}

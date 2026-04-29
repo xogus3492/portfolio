@@ -9,8 +9,7 @@ import {
 } from "lucide-react";
 import { FileNode } from "@/types";
 import { useEditorStore } from "@/store/editorStore";
-import { cn } from "@/lib/utils";
-import { getFileIconColor } from "@/lib/utils";
+import { cn, getFileIconColor } from "@/lib/utils";
 
 interface FileTreeNodeProps {
   node: FileNode;

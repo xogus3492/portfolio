@@ -50,6 +50,7 @@
   /* 애니메이션 */
   --animate-blink: blink 1s step-end infinite;
   --animate-fade-in: fadeIn 0.15s ease-out;
+  --animate-slide-in: slideIn 0.18s ease-out;
 }
 
 @keyframes blink {
@@ -62,9 +63,19 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes typing {
   from { width: 0; }
   to { width: 100%; }
+}
+
+/* 에디터 콘텐츠 페이드인 */
+.editor-fade-in {
+  animation: fadeIn 0.1s ease-out;
 }
 
 *, *::before, *::after {

@@ -77,7 +77,7 @@ export default function WelcomeTab() {
   const allFiles = FLAT_FILES;
 
   return (
-    <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16">
+    <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16 editor-fade-in">
       <div className="w-full max-w-2xl">
         <div className="mb-12">
           <pre className="text-vs-accent text-xs leading-tight font-mono mb-6 hidden sm:block">
