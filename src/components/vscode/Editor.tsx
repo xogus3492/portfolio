@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark-dimmed.css";
 import { useEditorStore } from "@/store/editorStore";
 import WelcomeTab from "./WelcomeTab";
+
+// LineNumbers의 lineHeight와 반드시 일치해야 함
+const LINE_HEIGHT_PX = 25.6; // 1.6rem at 16px base
 
 interface LineNumbersProps {
   count: number;
@@ -15,15 +18,14 @@ interface LineNumbersProps {
 function LineNumbers({ count }: LineNumbersProps) {
   return (
     <div
-      className="select-none shrink-0 pt-4 pb-4 pr-4 text-right"
-      style={{ minWidth: "3rem", width: "3rem" }}
+      className="select-none pt-4 pr-4 text-right pointer-events-none"
       aria-hidden="true"
     >
       {Array.from({ length: count }, (_, i) => (
         <div
           key={i + 1}
-          className="text-vs-text-muted text-sm leading-relaxed font-mono"
-          style={{ fontSize: "13px", lineHeight: "1.6rem" }}
+          className="text-vs-text-muted font-mono"
+          style={{ fontSize: "13px", lineHeight: `${LINE_HEIGHT_PX}px` }}
         >
           {i + 1}
         </div>
@@ -36,22 +38,34 @@ export default function Editor() {
   const { tabs, activeTabId } = useEditorStore();
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
-  const lineCount = useMemo(() => {
-    if (!activeTab?.content) return 0;
-    return activeTab.content.split("\n").length;
-  }, [activeTab?.content]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [lineCount, setLineCount] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setLineCount(Math.ceil(el.scrollHeight / LINE_HEIGHT_PX) + 1);
+    };
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    update();
+
+    return () => ro.disconnect();
+  }, [activeTab?.id, activeTab?.content]);
 
   if (!activeTab) {
     return <WelcomeTab />;
   }
 
   return (
-    <div className="relative flex-1 overflow-y-auto overflow-x-hidden bg-vs-bg">
-      {/* absolute로 배치해 레이아웃 높이에 영향을 주지 않음 */}
+    <div ref={scrollRef} className="relative flex-1 overflow-y-auto overflow-x-hidden bg-vs-bg">
+      {/* absolute 배치로 스크롤 높이에 영향 없음 */}
       <div
-        className="absolute top-0 left-0 pt-4 pr-4 text-right select-none pointer-events-none"
+        className="absolute top-0 left-0"
         style={{ width: "3rem" }}
-        aria-hidden="true"
       >
         <LineNumbers count={lineCount} />
       </div>
