@@ -28,7 +28,7 @@ const DEFAULT_TAB: EditorTab = {
 export const useEditorStore = create<EditorState>()((set) => ({
   tabs: [DEFAULT_TAB],
   activeTabId: DEFAULT_TAB.id,
-  expandedFolders: new Set<string>(),
+  expandedFolders: new Set(["career", "projects", "skills", "certificate"]),
 
   openFile: (node: FileNode) => {
     if (!node.content) return;
