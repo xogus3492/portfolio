@@ -38,15 +38,15 @@ export default function Editor() {
   const { tabs, activeTabId } = useEditorStore();
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [lineCount, setLineCount] = useState(0);
 
   useEffect(() => {
-    const el = scrollRef.current;
+    const el = contentRef.current;
     if (!el) return;
 
     const update = () => {
-      setLineCount(Math.ceil(el.scrollHeight / LINE_HEIGHT_PX) + 1);
+      setLineCount(Math.ceil(el.offsetHeight / LINE_HEIGHT_PX) + 1);
     };
 
     const ro = new ResizeObserver(update);
@@ -61,7 +61,7 @@ export default function Editor() {
   }
 
   return (
-    <div ref={scrollRef} className="relative flex-1 overflow-y-auto overflow-x-hidden bg-vs-bg">
+    <div className="relative flex-1 overflow-y-auto overflow-x-hidden bg-vs-bg">
       {/* absolute 배치로 스크롤 높이에 영향 없음 */}
       <div
         className="absolute top-0 left-0"
@@ -70,8 +70,8 @@ export default function Editor() {
         <LineNumbers count={lineCount} />
       </div>
 
-      {/* 콘텐츠가 스크롤 높이를 결정 */}
-      <div className="pt-4 pb-16 pr-8 overflow-x-hidden" style={{ paddingLeft: "3.5rem" }}>
+      {/* 콘텐츠가 스크롤 높이를 결정 — 실제 높이 측정 기준점 */}
+      <div ref={contentRef} className="pt-4 pb-16 pr-8 overflow-x-hidden" style={{ paddingLeft: "3.5rem" }}>
         <div className="md-content max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
