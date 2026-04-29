@@ -71,17 +71,8 @@ function QuickLink({ node }: QuickLinkProps) {
   );
 }
 
-function useIsMac() {
-  const [isMac, setIsMac] = useState(false);
-  useEffect(() => {
-    setIsMac(/Mac|iPhone|iPad|iPod/.test(navigator.platform));
-  }, []);
-  return isMac;
-}
-
 export default function WelcomeTab() {
   const allFiles = FLAT_FILES;
-  const isMac = useIsMac();
 
   return (
     <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16 editor-fade-in">
@@ -147,16 +138,16 @@ export default function WelcomeTab() {
               </h2>
               <div className="space-y-1 text-xs text-vs-text-muted">
                 <p>
-                  <kbd className="bg-vs-active px-1 rounded text-vs-text">
-                    {isMac ? "⌘B" : "Ctrl+B"}
-                  </kbd>{" "}
-                  사이드바 토글
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">Ctrl+B</kbd>
+                  {" / "}
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">⌘B</kbd>
+                  {" "}사이드바 토글
                 </p>
                 <p>
-                  <kbd className="bg-vs-active px-1 rounded text-vs-text">
-                    {isMac ? "⌥W" : "Alt+W"}
-                  </kbd>{" "}
-                  탭 닫기
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">Alt+W</kbd>
+                  {" / "}
+                  <kbd className="bg-vs-active px-1 rounded text-vs-text">⌥W</kbd>
+                  {" "}탭 닫기
                 </p>
                 <p>파일을 더블클릭하면 탭이 고정됩니다.</p>
               </div>
