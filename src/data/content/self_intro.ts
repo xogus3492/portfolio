@@ -5,7 +5,9 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 ## 소개
 
 안녕하세요. 소프트웨어 엔지니어 **장태현**입니다.
+
 현재 다양한 경험을 통해 스스로의 기준을 세워가고 있습니다.
+
 폭넓은 경험과 지속적인 성장이 가능한 환경을 지향합니다.
 
 ## 경력
@@ -25,16 +27,14 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 | 항목 | 내용 |
 |------|------|
 | 📧 Email | wkdxogus3492@gmail.com |
-| 📱 전화 | 010-6743-4320 |
+| 📱 전화 | [010-6743-4320](tel:010-6743-4320) |
+
+## URL
+
+| 항목 | 주소 |
+|------|------|
 | 🐙 GitHub | [github.com/xogus3492](https://github.com/xogus3492) |
 | 📝 Tistory | [taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
-
-## 관심 분야
-
-- 고성능 백엔드 API 설계 및 최적화
-- 대용량 데이터 처리와 캐싱 전략
-- CI/CD 파이프라인 구축 및 자동화
-- 클린 아키텍처 & 도메인 주도 설계
 `;
 
 export default SELF_INTRO_CONTENT;
