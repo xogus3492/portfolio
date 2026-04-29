@@ -51,13 +51,24 @@ function QuickLink({ node }: QuickLinkProps) {
   const { openFile } = useEditorStore();
   const iconColor = getFileIconColor(node.language ?? "plaintext");
 
+  const parts = node.id.split("/");
+  const folderName = parts.length > 1 ? parts[0] : null;
+
   return (
     <button
       onClick={() => openFile(node)}
-      className="flex items-center gap-2 px-3 py-1.5 rounded text-sm text-vs-link hover:text-vs-text-active hover:bg-vs-hover transition-colors cursor-pointer"
+      className="flex items-center gap-2 px-3 py-1.5 rounded text-sm hover:bg-vs-hover transition-colors cursor-pointer w-full text-left"
     >
-      <FileText size={14} style={{ color: iconColor }} />
-      <span>{node.name}</span>
+      <FileText size={14} style={{ color: iconColor }} className="shrink-0" />
+      <span className="flex items-center gap-1 min-w-0">
+        {folderName && (
+          <>
+            <span className="text-vs-text-muted truncate">{folderName}</span>
+            <span className="text-vs-text-dim">/</span>
+          </>
+        )}
+        <span className="text-vs-link truncate">{node.name}</span>
+      </span>
     </button>
   );
 }
