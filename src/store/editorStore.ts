@@ -2,8 +2,6 @@
 
 import { create } from "zustand";
 import { EditorTab, FileNode } from "@/types";
-import SELF_INTRO_CONTENT from "@/data/content/self_intro";
-
 interface EditorState {
   tabs: EditorTab[];
   activeTabId: string | null;
@@ -17,17 +15,9 @@ interface EditorState {
   closeAllTabs: () => void;
 }
 
-const DEFAULT_TAB: EditorTab = {
-  id: "자기소개.md",
-  name: "자기소개.md",
-  language: "markdown",
-  content: SELF_INTRO_CONTENT,
-  isPreview: false,
-};
-
 export const useEditorStore = create<EditorState>()((set) => ({
-  tabs: [DEFAULT_TAB],
-  activeTabId: DEFAULT_TAB.id,
+  tabs: [],
+  activeTabId: null,
   expandedFolders: new Set(["career", "projects", "skills", "certificate"]),
 
   openFile: (node: FileNode) => {
