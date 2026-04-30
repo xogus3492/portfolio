@@ -23,11 +23,9 @@ export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 - 🚀 [Live Site](https://sm-rehabilitation-center.vercel.app/)
 `;
 
-export const LITTLE_BANK_CONTENT = `# 리틀뱅크 ⭐
+export const LITTLE_BANK_CONTENT = `# 🏦 리틀뱅크 (LittleBank)
 
 **기간:** 2025.03 ~ 2025.07 &nbsp;&nbsp; **유형:** 팀 프로젝트
-
-> 아이들의 학습동기 부여 어플
 
 ## 팀 구성 & 역할
 
@@ -35,17 +33,29 @@ export const LITTLE_BANK_CONTENT = `# 리틀뱅크 ⭐
 |------|------|
 | App(PM) 1명, Back-end 2명, Design 1명 | **Back-end, PL** |
 
+## 서비스 소개
+
+> **리틀뱅크**는 학습 미션 시스템을 통해 아이가 미션을 수행하면 부모가 약속한 보상을 주어, 아이에게 학습 동기를 주는 어플입니다.
+>
+> 부모 유저가 자녀 계정과 연동하여 목표 관리, 미션 설정, 목표 달성 등 모니터링할 수 있는 서비스를 제공합니다.
+
+## 시스템 아키텍처
+
+![CI/CD Architecture](https://github.com/user-attachments/assets/37f4dbdb-5424-49b0-84a6-c40dbfecb4ab)
+
 ## 기술 스택
 
 | 영역 | 기술 |
 |------|------|
-| Backend | Spring Boot, JPA, QueryDSL |
-| Database | MySQL, Redis |
-| Infra | Nginx, Docker, AWS EC2/RDS/S3/CodeDeploy |
-| CI/CD | GitHub Actions |
+| Backend | Java 17, Spring Boot 3.x, Spring Security, JPA, QueryDSL |
+| Database | MySQL 8.0, Redis |
+| Infra | AWS, Docker, Nginx |
+| CI/CD | GitHub Actions, CodeDeploy |
+| External | Firebase, Amazon S3 |
+| Real-time | WebSocket (STOMP) |
 | 문서화 | Swagger |
 
-## 주요 기여
+## 주요 성과
 
 ### 1. CI/CD 파이프라인 구축
 
@@ -62,7 +72,20 @@ BFF(Backend For Frontend) 관점의 API로 분리하여 클라이언트 부하 �
 Toss Payments API 기반으로
 결제 전 정보를 서버에 저장 → 승인 후 비교 검증하는 플로우를 설계하여 위변조 방지
 
+## 서비스 화면
+
+![홈](https://github.com/user-attachments/assets/4c36e5c1-6fe9-449c-a730-f97c7b3e640f)
+![채팅](https://github.com/user-attachments/assets/f4cd2966-7c56-4c27-8478-d3f5fa43d4aa)
+![챌린지](https://github.com/user-attachments/assets/065b0414-c592-4f3e-a466-6d4a21f80699)
+![1:1 경쟁](https://github.com/user-attachments/assets/7f353d6b-2857-4e95-a8a9-7baf6f8cf909)
+![랭킹](https://github.com/user-attachments/assets/6270a9db-11fd-429b-8c64-87c745dc8e16)
+![피드](https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a33adc)
+![결제](https://github.com/user-attachments/assets/efe79236-aad1-4153-b3b7-f11fea22d898)
+![구독](https://github.com/user-attachments/assets/9e8c2673-f6c4-40d1-845f-982549f4831f)
+![혜택](https://github.com/user-attachments/assets/36849642-2b5d-41ac-b7d4-fde69f7161ad)
+
 ## 링크
+
 [![](/icons/github.png) GitHub](https://github.com/little-bank/littlebank-server)
 `;
 

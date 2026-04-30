@@ -255,10 +255,16 @@ html, body {
 
 .md-content img {
   display: inline;
-  height: 1.1em;
-  width: auto;
+  max-width: 100%;
+  height: auto;
   vertical-align: middle;
   margin: 0 0.1em;
+}
+
+/* GitHub 아이콘처럼 링크 안에 있는 작은 이미지 */
+.md-content a img {
+  height: 1.1em;
+  width: auto;
 }
 
 .md-content hr {
