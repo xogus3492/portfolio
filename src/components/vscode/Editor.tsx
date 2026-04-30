@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github-dark-dimmed.css";
 import { useEditorStore } from "@/store/editorStore";
 import WelcomeTab from "./WelcomeTab";
@@ -75,7 +76,7 @@ export default function Editor() {
         <div className="md-content max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
             components={{
               h1: ({ children }) => <h1>{children}</h1>,
               h2: ({ children }) => <h2>{children}</h2>,

@@ -254,17 +254,47 @@ html, body {
 }
 
 .md-content img {
-  display: inline;
   max-width: 100%;
   height: auto;
   vertical-align: middle;
   margin: 0 0.1em;
 }
 
-/* GitHub 아이콘처럼 링크 안에 있는 작은 이미지 */
+/* 단독 이미지 (p 태그 안) — 중앙 정렬, 크기 제한 */
+.md-content p img {
+  display: block;
+  max-width: 70%;
+  max-height: 360px;
+  margin: 0.5rem auto;
+}
+
+/* 링크 안 아이콘 이미지 (GitHub 등) */
 .md-content a img {
+  display: inline;
   height: 1.1em;
   width: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0 0.15em;
+  vertical-align: middle;
+}
+
+/* 서비스 화면 2열 그리드 */
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.img-grid img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  max-width: none;
+  display: block;
+  margin: 0;
+  border-radius: 6px;
 }
 
 .md-content hr {

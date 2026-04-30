@@ -74,15 +74,17 @@ Toss Payments API 기반으로
 
 ## 서비스 화면
 
-![홈](https://github.com/user-attachments/assets/4c36e5c1-6fe9-449c-a730-f97c7b3e640f)
-![채팅](https://github.com/user-attachments/assets/f4cd2966-7c56-4c27-8478-d3f5fa43d4aa)
-![챌린지](https://github.com/user-attachments/assets/065b0414-c592-4f3e-a466-6d4a21f80699)
-![1:1 경쟁](https://github.com/user-attachments/assets/7f353d6b-2857-4e95-a8a9-7baf6f8cf909)
-![랭킹](https://github.com/user-attachments/assets/6270a9db-11fd-429b-8c64-87c745dc8e16)
-![피드](https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a33adc)
-![결제](https://github.com/user-attachments/assets/efe79236-aad1-4153-b3b7-f11fea22d898)
-![구독](https://github.com/user-attachments/assets/9e8c2673-f6c4-40d1-845f-982549f4831f)
-![혜택](https://github.com/user-attachments/assets/36849642-2b5d-41ac-b7d4-fde69f7161ad)
+<div class="img-grid">
+  <img src="https://github.com/user-attachments/assets/4c36e5c1-6fe9-449c-a730-f97c7b3e640f" alt="홈" />
+  <img src="https://github.com/user-attachments/assets/f4cd2966-7c56-4c27-8478-d3f5fa43d4aa" alt="채팅" />
+  <img src="https://github.com/user-attachments/assets/065b0414-c592-4f3e-a466-6d4a21f80699" alt="챌린지" />
+  <img src="https://github.com/user-attachments/assets/7f353d6b-2857-4e95-a8a9-7baf6f8cf909" alt="1:1 경쟁" />
+  <img src="https://github.com/user-attachments/assets/6270a9db-11fd-429b-8c64-87c745dc8e16" alt="랭킹" />
+  <img src="https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a33adc" alt="피드" />
+  <img src="https://github.com/user-attachments/assets/efe79236-aad1-4153-b3b7-f11fea22d898" alt="결제" />
+  <img src="https://github.com/user-attachments/assets/9e8c2673-f6c4-40d1-845f-982549f4831f" alt="구독" />
+  <img src="https://github.com/user-attachments/assets/36849642-2b5d-41ac-b7d4-fde69f7161ad" alt="혜택" />
+</div>
 
 ## 링크
 
