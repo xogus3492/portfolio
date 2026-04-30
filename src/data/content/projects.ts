@@ -72,55 +72,6 @@ BFF(Backend For Frontend) 관점의 API로 분리하여 클라이언트 부하 �
 Toss Payments API 기반으로
 결제 전 정보를 서버에 저장 → 승인 후 비교 검증하는 플로우를 설계하여 위변조 방지
 
-## 서비스 화면
-
-<div class="img-grid">
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/4c36e5c1-6fe9-449c-a730-f97c7b3e640f" alt="홈" />
-    <span>홈</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/f4cd2966-7c56-4c27-8478-d3f5fa43d4aa" alt="채팅" />
-    <span>채팅</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/065b0414-c592-4f3e-a466-6d4a21f80699" alt="챌린지" />
-    <span>챌린지</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/7f353d6b-2857-4e95-a8a9-7baf6f8cf909" alt="1:1 경쟁" />
-    <span>1:1 경쟁</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/6270a9db-11fd-429b-8c64-87c745dc8e16" alt="랭킹" />
-    <span>랭킹</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a30adc" alt="피드" />
-    <span>피드</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/efe79236-aad1-4153-b3b7-f11fea22d898" alt="결제" />
-    <span>결제</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/9e8c2673-f6c4-40d1-845f-982549f4831f" alt="구독" />
-    <span>구독</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/36849642-2b5d-41ac-b7d4-fde69f7161ad" alt="혜택" />
-    <span>혜택</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/47baca81-6e1f-432b-bee3-5cdbc2a0a8e6" alt="보안" />
-    <span>보안</span>
-  </div>
-  <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/01eac9ae-8dbb-4eb0-9024-441b041babc3" alt="약관" />
-    <span>약관</span>
-  </div>
-</div>
-
 ## 링크
 
 [![](/icons/github.png) GitHub](https://github.com/little-bank/littlebank-server)
