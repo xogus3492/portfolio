@@ -39,14 +39,6 @@ export const FILE_TREE: FileNode[] = [
     type: "folder",
     children: [
       {
-        id: "projects/재활센터-홈페이지.md",
-        name: "재활센터-홈페이지.md",
-        type: "file",
-        language: "markdown",
-        content: REHAB_CENTER_CONTENT,
-        iconUrl: "/icons/house-icon.png",
-      },
-      {
         id: "projects/리틀뱅크.md",
         name: "리틀뱅크.md",
         type: "file",
@@ -61,6 +53,14 @@ export const FILE_TREE: FileNode[] = [
         language: "markdown",
         content: DEVHUB_CONTENT,
         iconUrl: "/icons/devhub-icon.png",
+      },
+      {
+        id: "projects/재활센터-홈페이지.md",
+        name: "재활센터-홈페이지.md",
+        type: "file",
+        language: "markdown",
+        content: REHAB_CENTER_CONTENT,
+        iconUrl: "/icons/house-icon.png",
       },
       {
         id: "projects/게시판.md",
