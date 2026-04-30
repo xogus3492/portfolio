@@ -59,18 +59,224 @@ export const LITTLE_BANK_CONTENT = `# 🏦 리틀뱅크 (LittleBank)
 
 ### 1. CI/CD 파이프라인 구축
 
-GitHub Actions + CodeDeploy를 활용한 자동 배포 환경 구성으로
-배포 과정 자동화 및 운영 편의성 개선
+PR이 \`develop\` / \`main\` 브랜치에 **머지될 때만** 자동 배포되도록 트리거 조건을 설정하고,
+GitHub Actions → S3 업로드 → AWS CodeDeploy 순서로 파이프라인을 구성했습니다.
+환경 설정 파일은 Base64 인코딩된 GitHub Secrets에서 런타임에 복원하여 레포에 노출되지 않게 관리했습니다.
 
-### 2. 채팅방 API 구조 개선
+\`\`\`yaml
+# .github/workflows/trigger-dev.yml
+on:
+  pull_request:
+    branches: [ develop ]
+    types: [ closed ]
 
-클라이언트에서 처리하던 채팅방 정렬·읽음 상태를
-BFF(Backend For Frontend) 관점의 API로 분리하여 클라이언트 부하 감소
+jobs:
+  build-and-deploy:
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Generate application.yml
+        run: echo "\${{ secrets.APPLICATION_YML }}" | base64 --decode > ./src/main/resources/application.yml
+      - name: Zip & Upload to S3
+        run: |
+          zip -r ./\${{ github.sha }}.zip .
+          aws s3 cp ./\${{ github.sha }}.zip s3://\${{ secrets.S3_BUCKET_NAME_DEV }}/deploy/\${{ github.sha }}.zip
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name littlebank-deploy \
+            --deployment-group-name env-dev
+\`\`\`
 
-### 3. 결제 위변조 방지 플로우 구현
+Docker 멀티스테이지 빌드로 빌드 환경과 실행 환경을 분리해 최종 이미지 크기를 최소화했습니다.
 
-Toss Payments API 기반으로
-결제 전 정보를 서버에 저장 → 승인 후 비교 검증하는 플로우를 설계하여 위변조 방지
+\`\`\`dockerfile
+FROM amazoncorretto:17 AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew clean build -x test
+
+FROM amazoncorretto:17
+COPY --from=builder /app/build/libs/app.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+\`\`\`
+
+---
+
+### 2. WebSocket 기반 실시간 채팅 + JWT 인증 처리
+
+STOMP 프로토콜 위에서 WebSocket 연결 시 JWT 토큰을 검증하는 채널 인터셉터를 구현했습니다.
+HTTP 필터가 아닌 STOMP \`CONNECT\` 커맨드 단계에서 인증을 처리해 WebSocket 연결 자체를 보호합니다.
+
+\`\`\`java
+@Component
+public class StompChannelInterceptor implements ChannelInterceptor {
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            String bearerToken = accessor.getFirstNativeHeader("Authorization");
+            if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+                String token = bearerToken.substring(7);
+                if (tokenProvider.validateToken(token)) {
+                    accessor.setUser(tokenProvider.getAuthentication(token));
+                }
+            }
+        }
+        return message;
+    }
+}
+\`\`\`
+
+메시지 전송 시에는 채팅방 참여자를 조회해 각 사용자의 개인 구독 경로로 라우팅합니다.
+차단된 사용자에게는 메시지가 전달되지 않도록 처리했습니다.
+
+\`\`\`java
+@MessageMapping("/chat-send")
+public void sendMessage(@Payload ChatMessageRequest request, Authentication authentication) {
+    ChatMessage saved = chatMessageService.saveMessage(userDetails.getId(), request);
+    List<UserChatRoom> participants = chatMessageService.getChatRoomParticipants(request.getRoomId());
+
+    for (UserChatRoom participant : participants) {
+        if (participant.getUser().getId().equals(userDetails.getId())) continue;
+
+        Friend friend = friendService.findFriend(participant.getUser().getId(), userDetails.getId());
+        if (room.getRange() == RoomRange.PRIVATE && friend != null && friend.getIsBlocked()) continue;
+
+        // 참여자별 개인 구독 경로로 라우팅
+        messagingTemplate.convertAndSend(
+            "/sub/chat/" + request.getRoomId() + "/" + participant.getUser().getId(),
+            SocketMessageResponse.of(participant, saved, friend)
+        );
+    }
+}
+\`\`\`
+
+채팅방 목록 조회 시 클라이언트에서 처리하던 정렬·읽음 상태 계산을 서버 QueryDSL 쿼리로 이동시켜
+BFF(Backend For Frontend) 관점에서 클라이언트 부하를 줄였습니다.
+
+---
+
+### 3. 결제 위변조 방지 + 자동 환불 처리
+
+Toss Payments 결제 승인 요청 전 서버에 금액을 저장하고, 승인 후 비교 검증하는 플로우로 위변조를 방지합니다.
+결제 승인 후 서버 내부 처리(포인트 충전, 이력 저장) 중 예외가 발생하면 즉시 자동 환불을 트리거합니다.
+
+\`\`\`java
+public PaymentConfirmToUserResponse confirmPayment(Long userId, ConfirmPaymentRequest request) {
+    ResponseEntity<PaymentConfirmResponse> result = tossService.confirm(request);
+
+    if (result.getStatusCode().is2xxSuccessful()) {
+        try {
+            User user = userRepository.findById(userId).orElseThrow(...);
+            user.chargePoint(request.getAmount());
+            paymentRepository.save(Payment.builder()
+                .tossPaymentKey(result.getBody().getPaymentKey())
+                .amount(result.getBody().getTotalAmount())
+                ...
+                .build());
+            return PaymentConfirmToUserResponse.of(paymentHistory);
+
+        } catch (Exception e) {
+            // 내부 처리 실패 시 자동 환불
+            tossService.cancelPayment(
+                result.getBody().getPaymentKey(),
+                result.getBody().getTotalAmount(),
+                "결제 처리 중 오류 발생"
+            );
+        }
+    }
+    throw new PointException(ErrorCode.PAYMENT_PROCESS_ERROR);
+}
+\`\`\`
+
+---
+
+### 4. 동시성 제어 (낙관적 락 + 비관적 락)
+
+**채팅 읽음 처리 — 낙관적 락 + 재시도**
+
+여러 사용자가 동시에 메시지 읽음 상태를 업데이트할 때 충돌이 발생할 수 있습니다.
+\`@Version\` 컬럼으로 낙관적 락을 걸고, 충돌 시 최대 100회까지 백오프 재시도합니다.
+
+\`\`\`java
+@Entity
+public class ChatMessage {
+    @Column(nullable = false)
+    private Integer readCount;
+
+    @Version
+    private Long version; // 낙관적 락
+}
+
+@Service
+@Async
+@Transactional
+public class AsyncChatMessageService {
+    private static final int MAX_RETRY = 100;
+
+    public void decreaseReadCounts(List<Long> messageIds) {
+        List<ChatMessage> messages = chatMessageRepository.findAllByIdIn(messageIds);
+        int retryCount = 0;
+
+        while (retryCount++ < MAX_RETRY) {
+            try {
+                messages.forEach(m -> { if (m.getReadCount() > 0) m.readMessage(); });
+                chatMessageRepository.saveAll(messages);
+                return;
+            } catch (ObjectOptimisticLockingFailureException e) {
+                Thread.sleep(100); // 백오프 대기 후 재시도
+            }
+        }
+    }
+}
+\`\`\`
+
+**포인트 전송 — 비관적 락**
+
+포인트 잔액 차감/적립은 정합성이 중요하므로, 조회 시점에 \`PESSIMISTIC_WRITE\` 락을 획득합니다.
+
+\`\`\`java
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("SELECT u FROM User u WHERE u.id = :id")
+Optional<User> findByIdWithLock(@Param("id") Long userId);
+
+// PointService
+public CommonPointTransferResponse transferPoint(Long userId, PointTransferRequest request) {
+    User sender = userRepository.findByIdWithLock(userId).orElseThrow(...);
+    User receiver = userRepository.findByIdWithLock(request.getReceiverId()).orElseThrow(...);
+
+    if (sender.getPoint() < request.getPointAmount()) {
+        throw new PointException(ErrorCode.INSUFFICIENT_POINT_BALANCE);
+    }
+
+    sender.sendPoint(request.getPointAmount());
+    receiver.receivePoint(request.getPointAmount());
+}
+\`\`\`
+
+---
+
+### 5. Redis 기반 로그아웃 관리
+
+JWT는 서버 측에서 무효화할 수 없는 구조이므로, Refresh 토큰을 Redis에 저장하고
+로그아웃 시 삭제해 재사용을 차단합니다. 필터에서 Redis에 토큰이 존재하는지 확인해 로그아웃된 사용자를 막습니다.
+
+\`\`\`java
+// JwtFilter.java
+String refreshToken = cookieUtil.getCookieValue(request);
+if (refreshToken != null && tokenProvider.validateToken(refreshToken)) {
+    String loginUserKey = RedisPolicy.LOGIN_USER_KEY_PREFIX
+        + tokenProvider.getAuthentication(refreshToken).getName();
+
+    // Redis에 저장된 토큰과 불일치 = 로그아웃된 사용자
+    if (!redisDao.existData(loginUserKey)
+            || !refreshToken.equals(redisDao.getValues(loginUserKey))) {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        return;
+    }
+}
+\`\`\`
 
 ## 링크
 
