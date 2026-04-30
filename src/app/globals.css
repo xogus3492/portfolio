@@ -270,14 +270,19 @@ html, body {
 }
 
 /* 링크 안 아이콘 이미지 (GitHub 등) */
+.md-content a:has(img) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
 .md-content a img {
-  display: inline;
-  height: 1.1em;
+  display: block;
+  height: 1em;
   width: auto;
   max-width: none;
   max-height: none;
-  margin: 0 0.15em;
-  vertical-align: middle;
+  margin: 0;
 }
 
 /* 서비스 화면 3열 그리드 */
