@@ -23,7 +23,7 @@ export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 - 🚀 [Live Site](https://sm-rehabilitation-center.vercel.app/)
 `;
 
-export const LITTLE_BANK_CONTENT = `# 🏦 리틀뱅크 (LittleBank)
+export const LITTLE_BANK_CONTENT = `# <img src="/icons/littlebank-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 리틀뱅크 (LittleBank)
 
 **기간:** 2025.03 ~ 2025.07 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
