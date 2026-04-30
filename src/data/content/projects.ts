@@ -96,7 +96,7 @@ Toss Payments API 기반으로
     <span>랭킹</span>
   </div>
   <div class="img-grid-item">
-    <img src="https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a33adc" alt="피드" />
+    <img src="https://github.com/user-attachments/assets/08206b84-d264-4bab-a9c9-e91947a30adc" alt="피드" />
     <span>피드</span>
   </div>
   <div class="img-grid-item">
@@ -110,6 +110,14 @@ Toss Payments API 기반으로
   <div class="img-grid-item">
     <img src="https://github.com/user-attachments/assets/36849642-2b5d-41ac-b7d4-fde69f7161ad" alt="혜택" />
     <span>혜택</span>
+  </div>
+  <div class="img-grid-item">
+    <img src="https://github.com/user-attachments/assets/47baca81-6e1f-432b-bee3-5cdbc2a0a8e6" alt="보안" />
+    <span>보안</span>
+  </div>
+  <div class="img-grid-item">
+    <img src="https://github.com/user-attachments/assets/01eac9ae-8dbb-4eb0-9024-441b041babc3" alt="약관" />
+    <span>약관</span>
   </div>
 </div>
 
