@@ -10,6 +10,7 @@ import { FileNode } from "@/types";
 import { useEditorStore } from "@/store/editorStore";
 import { cn } from "@/lib/utils";
 import FileIcon from "./FileIcon";
+import { useDelayedTooltip } from "@/hooks/useDelayedTooltip";
 
 interface FileTreeNodeProps {
   node: FileNode;
@@ -19,6 +20,7 @@ interface FileTreeNodeProps {
 function FileTreeNode({ node, depth }: FileTreeNodeProps) {
   const { expandedFolders, activeTabId, toggleFolder, openFile, pinTab } =
     useEditorStore();
+  const { tooltip, onMouseEnter, onMouseLeave } = useDelayedTooltip();
 
   const isExpanded = expandedFolders.has(node.id);
   const isActive = activeTabId === node.id;
@@ -65,18 +67,38 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
   }
 
   return (
-    <button
-      onClick={() => openFile(node)}
-      onDoubleClick={() => pinTab(node.id)}
-      className={cn(
-        "flex items-center w-full gap-1.5 py-0.5 text-sm cursor-pointer transition-colors",
-        isActive ? "bg-vs-selection text-vs-text-active" : "text-vs-text hover:bg-vs-hover"
+    <>
+      <button
+        onClick={() => openFile(node)}
+        onDoubleClick={() => pinTab(node.id)}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        className={cn(
+          "flex items-center w-full gap-1.5 py-0.5 text-sm cursor-pointer transition-colors",
+          isActive ? "bg-vs-selection text-vs-text-active" : "text-vs-text hover:bg-vs-hover"
+        )}
+        style={{ paddingLeft: paddingLeft + 20 }}
+      >
+        <FileIcon id={node.id} language={node.language} iconUrl={node.iconUrl} size={15} />
+        <span className="truncate">{node.name}</span>
+      </button>
+
+      {tooltip.visible && (
+        <div
+          className="fixed z-[9999] px-2 py-1 text-xs rounded whitespace-nowrap pointer-events-none"
+          style={{
+            top: tooltip.top,
+            left: tooltip.left,
+            background: "#252526",
+            color: "#cccccc",
+            border: "1px solid #3d3d3d",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+          }}
+        >
+          {node.id}
+        </div>
       )}
-      style={{ paddingLeft: paddingLeft + 20 }}
-    >
-      <FileIcon id={node.id} language={node.language} iconUrl={node.iconUrl} size={15} />
-      <span className="truncate">{node.name}</span>
-    </button>
+    </>
   );
 }
 
