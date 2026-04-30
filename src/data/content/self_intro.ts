@@ -33,7 +33,7 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 
 | 항목 | 주소 |
 |------|------|
-| GitHub | [![](/icons/github.png) github.com/xogus3492](https://github.com/xogus3492) |
+| GitHub | [![](/icons/github.svg) github.com/xogus3492](https://github.com/xogus3492) |
 | 📝 Tistory | [taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
 `;
 

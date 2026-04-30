@@ -19,7 +19,7 @@ export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 
 ## 링크
 
-- [![](/icons/github.png) GitHub](https://github.com/xogus3492/sm-rehabilitation-center-website)
+- [![](/icons/github.svg) GitHub](https://github.com/xogus3492/sm-rehabilitation-center-website)
 - 🚀 [Live Site](https://sm-rehabilitation-center.vercel.app/)
 `;
 
@@ -157,7 +157,7 @@ List<Tuple> myRooms = queryFactory
 이 방식으로 읽기(채팅 목록 조회) 시 정렬을 위한 서브쿼리가 완전히 제거됩니다.
 쓰기(메시지 전송)에서 1회 벌크 UPDATE를 실행하는 trade-off를 통해 읽기 성능을 개선했습니다.
 
-**미읽은 메시지 수 상한 300개 제한**
+**안읽은 메시지 수 상한 300개 제한**
 
 안읽은 메시지가 많을 경우 COUNT 쿼리 비용이 커질 수 있어, \`LIMIT 301\` 을 걸고 300을 초과하면 300으로 고정해 쿼리 비용을 제한했습니다.
 
@@ -275,7 +275,7 @@ public CommonPointTransferResponse transferPoint(Long userId, PointTransferReque
 
 ## 링크
 
-[![](/icons/github.png) GitHub](https://github.com/little-bank/littlebank-server)
+[![](/icons/github.svg) GitHub](https://github.com/little-bank/littlebank-server)
 `;
 
 export const DEVHUB_CONTENT = `# DEVHUB
@@ -319,7 +319,7 @@ DB 락(Lock)을 활용하여 동시 요청에 의한 데이터 정합성 문제 
 
 ## 링크
 
-- [![](/icons/github.png) GitHub](https://github.com/Devs-Of-Kosmo/devhub-server)
+- [![](/icons/github.svg) GitHub](https://github.com/Devs-Of-Kosmo/devhub-server)
 - 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
@@ -356,7 +356,7 @@ export const BOARD_CONTENT = `# 게시판 프로젝트
 
 ## 링크
 
-- [![](/icons/github.png) GitHub](https://github.com/Cupid-Arrow-team/Board/tree/develop)
+- [![](/icons/github.svg) GitHub](https://github.com/Cupid-Arrow-team/Board/tree/develop)
 `;
 
 export const FYB_CONTENT = `# FYB (Fit Your Balance)
@@ -387,6 +387,6 @@ export const FYB_CONTENT = `# FYB (Fit Your Balance)
 
 ## 링크
 
-- [![](/icons/github.png) GitHub](https://github.com/xogus3492/Front_Android)
+- [![](/icons/github.svg) GitHub](https://github.com/xogus3492/Front_Android)
 - 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
 `;
