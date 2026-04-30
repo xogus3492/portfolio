@@ -395,7 +395,7 @@ export const BOARD_CONTENT = `# <img src="/icons/board-icon.png" style="display:
 - [![](/icons/github.svg) Board](https://github.com/Cupid-Arrow-team/Board/tree/develop)
 `;
 
-export const FYB_CONTENT = `# FYB (Fit Your Balance)
+export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> FYB (Fit Your Balance)
 
 **기간:** 2022.03 ~ 2022.11 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
@@ -414,7 +414,11 @@ export const FYB_CONTENT = `# FYB (Fit Your Balance)
 | Mobile | Android, Java |
 | 네트워크 | Retrofit2, OkHttp3, Gson |
 
-## 주요 기여
+&nbsp;
+
+## 담당한 부분
+
+안드로이드 애플리케이션 구현
 
 - Retrofit2 기반 REST API 클라이언트 구현
 - OkHttp3 인터셉터를 활용한 공통 헤더 처리
@@ -424,5 +428,5 @@ export const FYB_CONTENT = `# FYB (Fit Your Balance)
 ## 링크
 
 - [![](/icons/github.svg) Front_Android](https://github.com/xogus3492/Front_Android)
-- 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
+- [![](/icons/notion.png) 맞춤형 쇼핑몰 추천 서비스 FYB](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
 `;
