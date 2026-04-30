@@ -210,8 +210,9 @@ html, body {
 }
 
 .md-content ul, .md-content ol {
-  padding-left: 1.5rem;
+  padding-left: 0;
   margin-bottom: 0.875rem;
+  list-style-position: inside;
 }
 
 .md-content li {
