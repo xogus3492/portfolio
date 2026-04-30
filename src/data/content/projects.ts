@@ -282,7 +282,7 @@ export const DEVHUB_CONTENT = `# DEVHUB
 
 **기간:** 2024.07 ~ 2024.10 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
-> 초보 개발자를 위한 프로젝트 형상관리 서비스
+> 프로젝트 형상관리 기능을 활용하기 어려워하는 초보 개발자들을 위한 프로젝트 형상관리 서비스
 
 ## 팀 구성 & 역할
 
@@ -298,29 +298,56 @@ export const DEVHUB_CONTENT = `# DEVHUB
 | Database | MySQL, Redis |
 | Infra | Nginx, Docker, AWS |
 
+## 팀에서의 역할
+
+1. PL을 맡아 팀원들의 코드를 피드백하고 GitHub를 활용하여 코드를 병합하는 업무를 담당했습니다.
+2. 프로젝트의 핵심 서비스인 형상관리 기능을 설계하고 개발하는 일을 담당했습니다.
+
 ## 주요 기여
 
 ### 1. 이메일 발신 기능 성능 개선
 
+이메일 발신 기능이 동기 방식으로 처리되어 실제 서비스에서 치명적인 문제가 될 것이라고 판단, 비동기 방식으로 전환했습니다.
+
 \`\`\`
-개선 전: 4,159ms
-개선 후:    17ms
+개선 전: 4,159ms → 개선 후: 17ms  (응답 시간 99% 단축)
 \`\`\`
 
-동기 처리 → 비동기 처리로 전환하여 응답 시간 **99% 단축**
+[![](/icons/tistory.png) 이메일 발신 기능 성능 개선 과정](https://taehyeon-stroy.tistory.com/49)
 
-### 2. 형상관리 전략 설계
+---
 
-Snapshot 방식 vs Git 방식의 트레이드오프를 분석하여 최적 전략 채택
+### 2. 형상관리 전략 설계 — Snapshot vs Git
+
+유저 프로젝트를 서버에 저장하는 방식을 두고 두 전략을 비교 검토했습니다.
+
+- **Snapshot 방식**: 매 버전마다 전체 파일을 저장 → 디스크 용량 빠르게 소진
+- **Git 방식**: 변경분(diff)만 저장 → 용량 효율적, 최종 채택
+
+[![](/icons/notion.png) 형상관리 전략 결정 과정](https://wheat-eustoma-8a4.notion.site/4f6caacd19d746a5a77b2837725fd58c)
+
+---
 
 ### 3. 동시 저장 방지
 
-DB 락(Lock)을 활용하여 동시 요청에 의한 데이터 정합성 문제 해결
+여러 팀원이 동시에 파일을 업로드할 경우 최초 1건만 저장되어야 하는데, 의도와 달리 모두 저장되는 문제가 발생했습니다.
+DB 락을 적용하여 동시 요청에 의한 데이터 정합성 문제를 해결했습니다.
+
+[![](/icons/tistory.png) 동시 저장을 방지하는 방법](https://taehyeon-stroy.tistory.com/48)
+
+---
+
+### 4. AWS + Docker 배포
+
+RDS 연동 및 EC2에 Docker로 스프링부트 프로젝트를 배포하는 과정을 경험했습니다.
+
+- [![](/icons/tistory.png) AWS RDS 연동 과정](https://taehyeon-stroy.tistory.com/50)
+- [![](/icons/tistory.png) EC2에 Docker로 배포하는 과정](https://taehyeon-stroy.tistory.com/51)
 
 ## 링크
 
 - [![](/icons/github.svg) devhub-server](https://github.com/Devs-Of-Kosmo/devhub-server)
-- 📄 [Notion 문서](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
+- [![](/icons/notion.png) 프로젝트 형상관리 서비스 DEVHUB](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
 export const BOARD_CONTENT = `# 게시판 프로젝트

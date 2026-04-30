@@ -281,6 +281,17 @@ html, body {
   color: #858585;
 }
 
+.md-content a[href*="tistory.com"]:has(img)::after {
+  content: " - Tistory";
+  color: #858585;
+}
+
+.md-content a[href*="notion.site"]:has(img)::after,
+.md-content a[href*="notion.so"]:has(img)::after {
+  content: " - Notion";
+  color: #858585;
+}
+
 .md-content a img {
   display: block;
   height: 1em;
