@@ -72,7 +72,7 @@ export default function Editor() {
       </div>
 
       {/* 콘텐츠가 스크롤 높이를 결정 — 실제 높이 측정 기준점 */}
-      <div key={activeTab.id} ref={contentRef} className="pt-4 pb-16 pr-14 overflow-x-hidden editor-fade-in" style={{ paddingLeft: "3.5rem" }}>
+      <div key={activeTab.id} ref={contentRef} className="pt-6 pb-16 overflow-x-hidden editor-fade-in" style={{ paddingLeft: "3.5rem", paddingRight: "2rem" }}>
         <div className="md-content max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
