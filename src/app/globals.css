@@ -253,6 +253,14 @@ html, body {
   background-color: #252526;
 }
 
+.md-content img {
+  display: inline;
+  height: 1.1em;
+  width: auto;
+  vertical-align: middle;
+  margin: 0 0.1em;
+}
+
 .md-content hr {
   border: none;
   border-top: 1px solid #3d3d3d;
