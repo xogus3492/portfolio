@@ -102,10 +102,12 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ---
 
-### 2. WebSocket 기반 실시간 채팅 + JWT 인증 처리
+### 2. WebSocket 기반 실시간 채팅 구현
 
-STOMP 프로토콜 위에서 WebSocket 연결 시 JWT 토큰을 검증하는 채널 인터셉터를 구현했습니다.
-HTTP 필터가 아닌 STOMP \`CONNECT\` 커맨드 단계에서 인증을 처리해 WebSocket 연결 자체를 보호합니다.
+**STOMP 연결 단계 JWT 인증**
+
+HTTP 필터 체인이 아닌 STOMP \`CONNECT\` 커맨드 단계에서 JWT를 검증합니다.
+WebSocket은 최초 HTTP Upgrade 요청 이후 HTTP 필터가 동작하지 않으므로, 채널 인터셉터로 연결 자체를 보호했습니다.
 
 \`\`\`java
 @Component
@@ -113,14 +115,10 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String bearerToken = accessor.getFirstNativeHeader("Authorization");
-            if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-                String token = bearerToken.substring(7);
-                if (tokenProvider.validateToken(token)) {
-                    accessor.setUser(tokenProvider.getAuthentication(token));
-                }
+            String token = extractBearerToken(accessor.getFirstNativeHeader("Authorization"));
+            if (tokenProvider.validateToken(token)) {
+                accessor.setUser(tokenProvider.getAuthentication(token));
             }
         }
         return message;
@@ -128,32 +126,51 @@ public class StompChannelInterceptor implements ChannelInterceptor {
 }
 \`\`\`
 
-메시지 전송 시에는 채팅방 참여자를 조회해 각 사용자의 개인 구독 경로로 라우팅합니다.
-차단된 사용자에게는 메시지가 전달되지 않도록 처리했습니다.
+**채팅방 최신순 정렬 — displayIdx 선저장 방식**
+
+채팅방 목록을 최신 메시지 기준으로 정렬할 때, 단순하게 구현하면 조회 시점에 채팅방마다 최신 메시지 타임스탬프를 서브쿼리로 집계해야 합니다.
+채팅방 수가 N개라면 N번의 서브쿼리가 발생하는 구조입니다.
+
+이를 해결하기 위해 \`UserChatRoom\` 테이블에 \`display_idx (LocalDateTime)\` 컬럼을 두고,
+**메시지 전송 시점에 해당 채팅방의 모든 참여자 row를 한 번의 벌크 UPDATE로 갱신**하는 방식을 채택했습니다.
 
 \`\`\`java
-@MessageMapping("/chat-send")
-public void sendMessage(@Payload ChatMessageRequest request, Authentication authentication) {
-    ChatMessage saved = chatMessageService.saveMessage(userDetails.getId(), request);
-    List<UserChatRoom> participants = chatMessageService.getChatRoomParticipants(request.getRoomId());
-
-    for (UserChatRoom participant : participants) {
-        if (participant.getUser().getId().equals(userDetails.getId())) continue;
-
-        Friend friend = friendService.findFriend(participant.getUser().getId(), userDetails.getId());
-        if (room.getRange() == RoomRange.PRIVATE && friend != null && friend.getIsBlocked()) continue;
-
-        // 참여자별 개인 구독 경로로 라우팅
-        messagingTemplate.convertAndSend(
-            "/sub/chat/" + request.getRoomId() + "/" + participant.getUser().getId(),
-            SocketMessageResponse.of(participant, saved, friend)
-        );
-    }
+// 메시지 전송 시 — 쓰기 시점에 정렬 기준값 선저장
+@Override
+public void updateDisplayIdxByRoomId(Long roomId) {
+    queryFactory
+        .update(ucr)
+        .set(ucr.displayIdx, LocalDateTime.now())  // 참여자 전원 일괄 갱신
+        .where(ucr.room.id.eq(roomId))
+        .execute();  // 벌크 연산, 1회 쿼리
 }
+
+// 채팅방 목록 조회 시 — 서브쿼리 없이 단순 SELECT
+List<Tuple> myRooms = queryFactory
+    .select(cr.id, ucr.customRoomName, ucr.displayIdx, ...)
+    .from(ucr).join(ucr.room, cr)
+    .where(ucr.user.id.eq(userId))
+    .fetch();
+// 클라이언트에서 displayIdx 기준으로 정렬
 \`\`\`
 
-채팅방 목록 조회 시 클라이언트에서 처리하던 정렬·읽음 상태 계산을 서버 QueryDSL 쿼리로 이동시켜
-BFF(Backend For Frontend) 관점에서 클라이언트 부하를 줄였습니다.
+이 방식으로 읽기(채팅 목록 조회) 시 정렬을 위한 서브쿼리가 완전히 제거됩니다.
+쓰기(메시지 전송)에서 1회 벌크 UPDATE를 실행하는 trade-off를 통해 읽기 성능을 개선했습니다.
+
+**미읽은 메시지 수 상한 300개 제한**
+
+안읽은 메시지가 많을 경우 COUNT 쿼리 비용이 커질 수 있어, \`LIMIT 301\` 을 걸고 300을 초과하면 300으로 고정해 쿼리 비용을 제한했습니다.
+
+\`\`\`java
+Long count = queryFactory
+    .select(cm.id.count())
+    .from(cm)
+    .where(cm.room.id.eq(roomId), cm.id.gt(lastReadMessageId), ...)
+    .limit(MAX_UNREAD_MESSAGE_SHOW_COUNT + 1)  // 301개까지만 카운트
+    .fetchOne();
+
+return (int) Math.min(count, MAX_UNREAD_MESSAGE_SHOW_COUNT);  // 최대 300
+\`\`\`
 
 ---
 
@@ -255,28 +272,6 @@ public CommonPointTransferResponse transferPoint(Long userId, PointTransferReque
 }
 \`\`\`
 
----
-
-### 5. Redis 기반 로그아웃 관리
-
-JWT는 서버 측에서 무효화할 수 없는 구조이므로, Refresh 토큰을 Redis에 저장하고
-로그아웃 시 삭제해 재사용을 차단합니다. 필터에서 Redis에 토큰이 존재하는지 확인해 로그아웃된 사용자를 막습니다.
-
-\`\`\`java
-// JwtFilter.java
-String refreshToken = cookieUtil.getCookieValue(request);
-if (refreshToken != null && tokenProvider.validateToken(refreshToken)) {
-    String loginUserKey = RedisPolicy.LOGIN_USER_KEY_PREFIX
-        + tokenProvider.getAuthentication(refreshToken).getName();
-
-    // Redis에 저장된 토큰과 불일치 = 로그아웃된 사용자
-    if (!redisDao.existData(loginUserKey)
-            || !refreshToken.equals(redisDao.getValues(loginUserKey))) {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        return;
-    }
-}
-\`\`\`
 
 ## 링크
 
