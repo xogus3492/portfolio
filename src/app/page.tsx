@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import ActivityBar from "@/components/vscode/ActivityBar";
 import Sidebar from "@/components/vscode/Sidebar";
+import ResizeHandle from "@/components/vscode/ResizeHandle";
 import TabBar from "@/components/vscode/TabBar";
 import Breadcrumbs from "@/components/vscode/Breadcrumbs";
 import Editor from "@/components/vscode/Editor";
@@ -55,6 +56,7 @@ export default function Home() {
 
         {/* 사이드바: 데스크톱 인라인 / 모바일 오버레이 */}
         <Sidebar />
+        <ResizeHandle />
 
         {/* 메인 에디터 영역 */}
         <div className="flex flex-col flex-1 min-w-0">

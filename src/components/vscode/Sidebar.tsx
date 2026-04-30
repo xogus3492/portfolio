@@ -18,7 +18,7 @@ const PANEL_PLACEHOLDERS: Record<string, string> = {
 };
 
 export default function Sidebar() {
-  const { activePanel, isSidebarOpen, toggleSidebar } = useUIStore();
+  const { activePanel, isSidebarOpen, sidebarWidth, toggleSidebar } = useUIStore();
 
   if (!isSidebarOpen) return null;
 
@@ -33,10 +33,13 @@ export default function Sidebar() {
         aria-hidden="true"
       />
 
-      <aside className="flex flex-col w-60 shrink-0 bg-vs-sidebar border-r border-vs-border-subtle overflow-hidden select-none
+      <aside
+        className="flex flex-col shrink-0 bg-vs-sidebar border-r border-vs-border-subtle overflow-hidden select-none
                         fixed top-11 left-0 bottom-6 z-30
                         lg:relative lg:top-auto lg:left-auto lg:bottom-auto lg:z-auto
-                        animate-[slideIn_0.18s_ease-out]">
+                        animate-[slideIn_0.18s_ease-out]"
+        style={{ width: sidebarWidth }}
+      >
         <div className="flex items-center h-9 px-5 shrink-0">
           <span className="text-xs text-vs-text-muted font-semibold tracking-widest uppercase">
             {title}
