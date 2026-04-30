@@ -8,7 +8,7 @@ interface TooltipState {
   left: number;
 }
 
-export function useDelayedTooltip(delayMs = 3000) {
+export function useDelayedTooltip(delayMs = 1000) {
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, top: 0, left: 0 });
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const targetRef = useRef<HTMLElement | null>(null);
