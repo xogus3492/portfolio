@@ -425,6 +425,12 @@ export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inli
 - Gson을 사용한 JSON 직렬화/역직렬화 처리
 - 빅데이터 추천 결과를 Android UI에 연동
 
+&nbsp;
+
+## 앱 화면 구성
+
+![FYB 앱 화면](https://github.com/xogus3492/Front_Android/assets/77439799/2070fa63-7ce0-4a0a-9d47-be6700323102)
+
 ## 링크
 
 - [![](/icons/github.svg) Front_Android](https://github.com/xogus3492/Front_Android)
