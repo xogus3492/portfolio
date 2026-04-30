@@ -1,4 +1,4 @@
-export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
+export const REHAB_CENTER_CONTENT = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
 
 **기간:** 2026.01 ~ 진행중 &nbsp;&nbsp; **유형:** 개인 프로젝트 (외주)
 
@@ -11,7 +11,7 @@ export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 | Frontend | Next.js, React, TypeScript, Tailwind CSS, ESLint |
 | 도구 | Cursor, Vercel |
 
-## 주요 기여
+## 성과
 
 - **Notion MCP Server 활용 자동화 프로세스 구축**
   - 고객이 RFP 작성 → Agent가 추가된 요구사항 감지 → 검증 및 소스코드 반영
@@ -20,7 +20,7 @@ export const REHAB_CENTER_CONTENT = `# 재활센터 홈페이지
 ## 링크
 
 - [![](/icons/github.svg) sm-rehabilitation-center-website](https://github.com/xogus3492/sm-rehabilitation-center-website)
-- 🚀 [Live Site](https://sm-rehabilitation-center.vercel.app/)
+- 🌐 [Live Site](https://sm-rehabilitation-center.vercel.app/)
 `;
 
 export const LITTLE_BANK_CONTENT = `# <img src="/icons/littlebank-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 리틀뱅크 (LittleBank)
