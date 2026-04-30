@@ -276,6 +276,11 @@ html, body {
   gap: 0.35em;
 }
 
+.md-content a[href*="github.com"]:has(img)::after {
+  content: " - GitHub";
+  color: #858585;
+}
+
 .md-content a img {
   display: block;
   height: 1em;
