@@ -34,7 +34,7 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 | 항목 | 주소 |
 |------|------|
 | GitHub | [![](/icons/github.svg) xogus3492](https://github.com/xogus3492) |
-| 📝 Tistory | [taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
+| Tistory | [![](/icons/tistory.svg) taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
 `;
 
 export default SELF_INTRO_CONTENT;

@@ -314,7 +314,7 @@ export const DEVHUB_CONTENT = `# <img src="/icons/devhub-icon.png" style="displa
 개선 전: 4,159ms → 개선 후: 17ms  (응답 시간 99% 단축)
 \`\`\`
 
-- [![](/icons/tistory.png) 이메일 발신 기능 성능 개선 과정](https://taehyeon-stroy.tistory.com/49)
+- [![](/icons/tistory.svg) 이메일 발신 기능 성능 개선 과정](https://taehyeon-stroy.tistory.com/49)
 
 ---
 
@@ -334,7 +334,7 @@ export const DEVHUB_CONTENT = `# <img src="/icons/devhub-icon.png" style="displa
 여러 팀원이 동시에 파일을 업로드할 경우 최초 1건만 저장되어야 하는데, 의도와 달리 모두 저장되는 문제가 발생했습니다.
 DB 락을 적용하여 동시 요청에 의한 데이터 정합성 문제를 해결했습니다.
 
-- [![](/icons/tistory.png) 동시 저장을 방지하는 방법](https://taehyeon-stroy.tistory.com/48)
+- [![](/icons/tistory.svg) 동시 저장을 방지하는 방법](https://taehyeon-stroy.tistory.com/48)
 
 ---
 
@@ -342,8 +342,8 @@ DB 락을 적용하여 동시 요청에 의한 데이터 정합성 문제를 해
 
 RDS 연동 및 EC2에 Docker로 스프링부트 프로젝트를 배포하는 과정을 경험했습니다.
 
-- [![](/icons/tistory.png) AWS RDS 연동 과정](https://taehyeon-stroy.tistory.com/50)
-- [![](/icons/tistory.png) EC2에 Docker로 배포하는 과정](https://taehyeon-stroy.tistory.com/51)
+- [![](/icons/tistory.svg) AWS RDS 연동 과정](https://taehyeon-stroy.tistory.com/50)
+- [![](/icons/tistory.svg) EC2에 Docker로 배포하는 과정](https://taehyeon-stroy.tistory.com/51)
 
 ## 링크
 
@@ -370,8 +370,6 @@ export const BOARD_CONTENT = `# <img src="/icons/board-icon.png" style="display:
 | Backend | Spring Boot, JPA, Querydsl |
 | Database | H2, Redis |
 
-&nbsp;
-
 ## 트러블 슈팅
 
 ### 1. JPA N+1 문제
@@ -379,7 +377,7 @@ export const BOARD_CONTENT = `# <img src="/icons/board-icon.png" style="display:
 게시글 조회 시 연관관계 설정된 태그 엔티티를 사용하는 과정에서 태그 엔티티에 대한 N만큼의 추가 쿼리가 발생하는 현상을 발견했습니다.
 \`@Query\` 어노테이션과 JPQL로 태그 엔티티를 **Fetch Join** 하여 N+1개 → 1개 쿼리로 최적화했습니다.
 
-[![](/icons/tistory.png) N+1 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/5)
+[![](/icons/tistory.svg) N+1 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/5)
 
 ---
 
@@ -388,7 +386,7 @@ export const BOARD_CONTENT = `# <img src="/icons/board-icon.png" style="display:
 여러 Thread가 동시에 좋아요 API 요청을 보냈을 때 예상한 결과와 다르다는 것을 파악했습니다.
 **JMeter** 부하 테스트로 동시성 문제를 재현하고, 해당 레코드에 **비관적 락(Pessimistic Lock)** 을 적용하여 데이터 정합성을 보장했습니다.
 
-[![](/icons/tistory.png) 좋아요 기능 동시성 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/6)
+[![](/icons/tistory.svg) 좋아요 기능 동시성 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/6)
 
 ## 링크
 
@@ -414,8 +412,6 @@ export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inli
 | Mobile | Android, Java |
 | 네트워크 | Retrofit2, OkHttp3, Gson |
 
-&nbsp;
-
 ## 담당한 부분
 
 안드로이드 애플리케이션 구현
@@ -424,8 +420,6 @@ export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inli
 - OkHttp3 인터셉터를 활용한 공통 헤더 처리
 - Gson을 사용한 JSON 직렬화/역직렬화 처리
 - 빅데이터 추천 결과를 Android UI에 연동
-
-&nbsp;
 
 ## 앱 화면 구성
 
