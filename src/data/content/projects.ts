@@ -351,11 +351,11 @@ RDS 연동 및 EC2에 Docker로 스프링부트 프로젝트를 배포하는 과
 - [![](/icons/notion.png) 프로젝트 형상관리 서비스 DEVHUB](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
-export const BOARD_CONTENT = `# 게시판 프로젝트
+export const BOARD_CONTENT = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 게시판 프로젝트
 
 **기간:** 2023.03 ~ 2023.05 &nbsp;&nbsp; **유형:** 팀 프로젝트
 
-> 서비스 최적화를 통한 실무 수준 개발 프로젝트
+> 다양한 기술 활용과 코드 디자인, 코드 리뷰를 통한 서비스 최적화 과정으로 실무 프로젝트 수준의 개발을 목표로 진행한 프로젝트
 
 ## 팀 구성 & 역할
 
@@ -370,21 +370,29 @@ export const BOARD_CONTENT = `# 게시판 프로젝트
 | Backend | Spring Boot, JPA, Querydsl |
 | Database | H2, Redis |
 
+&nbsp;
+
 ## 트러블 슈팅
 
-### 1. JPA N+1 문제 해결
+### 1. JPA N+1 문제
 
-연관 엔티티 조회 시 발생하는 N+1 문제를 **Fetch Join**으로 해결하여
-쿼리 수를 N+1개 → 1개로 최적화
+게시글 조회 시 연관관계 설정된 태그 엔티티를 사용하는 과정에서 태그 엔티티에 대한 N만큼의 추가 쿼리가 발생하는 현상을 발견했습니다.
+\`@Query\` 어노테이션과 JPQL로 태그 엔티티를 **Fetch Join** 하여 N+1개 → 1개 쿼리로 최적화했습니다.
 
-### 2. 좋아요 기능 동시성 문제 해결
+[![](/icons/tistory.png) N+1 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/5)
 
-다수의 사용자가 동시에 좋아요를 누르는 상황에서
-**비관적 락(Pessimistic Lock)** 을 적용하여 데이터 정합성 보장
+---
+
+### 2. 게시글 좋아요 기능 동시성 문제
+
+여러 Thread가 동시에 좋아요 API 요청을 보냈을 때 예상한 결과와 다르다는 것을 파악했습니다.
+**JMeter** 부하 테스트로 동시성 문제를 재현하고, 해당 레코드에 **비관적 락(Pessimistic Lock)** 을 적용하여 데이터 정합성을 보장했습니다.
+
+[![](/icons/tistory.png) 좋아요 기능 동시성 문제 트러블 슈팅](https://taehyeon-stroy.tistory.com/6)
 
 ## 링크
 
-[![](/icons/github.svg) Board](https://github.com/Cupid-Arrow-team/Board/tree/develop)
+- [![](/icons/github.svg) Board](https://github.com/Cupid-Arrow-team/Board/tree/develop)
 `;
 
 export const FYB_CONTENT = `# FYB (Fit Your Balance)
