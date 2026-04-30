@@ -25,8 +25,8 @@ export const FILE_TREE: FileNode[] = [
     type: "folder",
     children: [
       {
-        id: "career/플레이투게더(2025.04~재직중).md",
-        name: "플레이투게더(2025.04~재직중).md",
+        id: "career/플레이투게더(25.04~재직중).md",
+        name: "플레이투게더(25.04~재직중).md",
         type: "file",
         language: "markdown",
         content: CAREER_CONTENT,
