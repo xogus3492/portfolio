@@ -8,10 +8,14 @@ interface FileIconEntry {
 
 const FILE_ID_ICONS: Record<string, FileIconEntry> = {
   "자기소개.md": { icon: User, color: "#4ec9b0" },
-  "career/플레이투게더(2025.04~재직중).md": { icon: Briefcase, color: "#e37933" },
   "skills/기술스택.md": { icon: Layers, color: "#519aba" },
   "certificate/자격증.md": { icon: Award, color: "#e5c07b" },
 };
+
+// 폴더 prefix → 아이콘 (파일명이 바뀌어도 폴더 기준으로 적용)
+const FOLDER_ICONS: Array<[string, FileIconEntry]> = [
+  ["career/", { icon: Briefcase, color: "#e37933" }],
+];
 
 interface FileIconProps {
   id: string;
@@ -35,7 +39,10 @@ export default function FileIcon({ id, language, iconUrl, size = 15 }: FileIconP
     );
   }
 
-  const entry = FILE_ID_ICONS[id];
+  const entry =
+    FILE_ID_ICONS[id] ??
+    FOLDER_ICONS.find(([prefix]) => id.startsWith(prefix))?.[1];
+
   if (entry) {
     const Icon = entry.icon;
     return <Icon size={size} style={{ color: entry.color, flexShrink: 0 }} />;
