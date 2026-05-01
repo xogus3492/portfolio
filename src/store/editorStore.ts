@@ -35,6 +35,7 @@ export const useEditorStore = create<EditorState>()((set) => ({
         name: node.name,
         language: node.language ?? "plaintext",
         content: node.content!,
+        contentEn: node.contentEn,
         isPreview: true,
         iconUrl: node.iconUrl,
       };

@@ -2,27 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { useEditorStore } from "@/store/editorStore";
+import { useUIStore } from "@/store/uiStore";
 import { FLAT_FILES } from "@/data/fileTree";
 import { FileNode } from "@/types";
 import FileIcon from "./FileIcon";
 
-const TYPING_TEXT =
-  "한 번 빠지면 시간 가는 줄 모르는, 개발이란 저에게 그런 존재입니다.";
+const TYPING_TEXTS = {
+  ko: "한 번 빠지면 시간 가는 줄 모르는, 개발이란 저에게 그런 존재입니다.",
+  en: "Once I get into it, I lose track of time — that's what development means to me.",
+};
 
-function TypingAnimation() {
+function TypingAnimation({ language }: { language: "ko" | "en" }) {
+  const text = TYPING_TEXTS[language];
   const [displayed, setDisplayed] = useState("");
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
+    setDisplayed("");
     let i = 0;
     const typingInterval = setInterval(() => {
-      if (i < TYPING_TEXT.length) {
-        setDisplayed(TYPING_TEXT.slice(0, i + 1));
+      if (i < text.length) {
+        setDisplayed(text.slice(0, i + 1));
         i++;
       } else {
         clearInterval(typingInterval);
       }
-    }, 55);
+    }, 45);
 
     const cursorInterval = setInterval(() => {
       setShowCursor((v) => !v);
@@ -32,7 +37,7 @@ function TypingAnimation() {
       clearInterval(typingInterval);
       clearInterval(cursorInterval);
     };
-  }, []);
+  }, [text]);
 
   return (
     <p className="text-vs-text-muted text-base font-mono">
@@ -71,8 +76,25 @@ function QuickLink({ node }: QuickLinkProps) {
   );
 }
 
+const ABOUT_TEXT = {
+  ko: {
+    career: "현대백화점 플랫폼 개발 (재직중)",
+    sidebarToggle: "사이드바 토글",
+    closeTab: "탭 닫기",
+    doubleClick: "파일을 더블클릭하면 탭이 고정됩니다.",
+  },
+  en: {
+    career: "Hyundai Dept. Store Platform Dev (Employed)",
+    sidebarToggle: "Toggle Sidebar",
+    closeTab: "Close Tab",
+    doubleClick: "Double-click a file to pin the tab.",
+  },
+};
+
 export default function WelcomeTab() {
   const allFiles = FLAT_FILES;
+  const { language } = useUIStore();
+  const t = ABOUT_TEXT[language];
 
   return (
     <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16 editor-fade-in">
@@ -94,7 +116,7 @@ export default function WelcomeTab() {
             </span>
           </h1>
 
-          <TypingAnimation />
+          <TypingAnimation language={language} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -128,7 +150,7 @@ export default function WelcomeTab() {
               </p>
               <p>
                 <span className="text-vs-accent">{">"}</span>{" "}
-                현대백화점 플랫폼 개발 (재직중)
+                {t.career}
               </p>
             </div>
 
@@ -141,15 +163,15 @@ export default function WelcomeTab() {
                   <kbd className="bg-vs-active px-1 rounded text-vs-text">Ctrl+B</kbd>
                   {" / "}
                   <kbd className="bg-vs-active px-1 rounded text-vs-text">⌘B</kbd>
-                  {" "}사이드바 토글
+                  {" "}{t.sidebarToggle}
                 </p>
                 <p>
                   <kbd className="bg-vs-active px-1 rounded text-vs-text">Alt+W</kbd>
                   {" / "}
                   <kbd className="bg-vs-active px-1 rounded text-vs-text">⌥W</kbd>
-                  {" "}탭 닫기
+                  {" "}{t.closeTab}
                 </p>
-                <p>파일을 더블클릭하면 탭이 고정됩니다.</p>
+                <p>{t.doubleClick}</p>
               </div>
             </div>
           </div>

@@ -38,3 +38,42 @@ const SELF_INTRO_CONTENT = `# 장태현 (Jang Taehyeon)
 `;
 
 export default SELF_INTRO_CONTENT;
+
+export const SELF_INTRO_CONTENT_EN = `# Jang Taehyeon
+
+> Once I get into it, I lose track of time — that's what development means to me.
+
+## About
+
+Hi, I'm **Jang Taehyeon**, a software engineer.
+
+I'm building my own standards through a variety of experiences.
+
+I strive for an environment that allows broad experience and continuous growth.
+
+## Career
+
+| Period | Company | Position |
+|--------|---------|----------|
+| 2025.04 ~ Present | PlayTogether | Junior / Developer |
+
+## Education
+
+| Period | Institution | Major |
+|--------|------------|-------|
+| 2021.03 ~ 2023.02 | Dongyang Mirae University | Computer Information Engineering |
+
+## Contact
+
+| | |
+|---|---|
+| 📧 Email | wkdxogus3492@gmail.com |
+| 📱 Phone | [010-6743-4320](tel:010-6743-4320) |
+
+## Links
+
+| | |
+|---|---|
+| GitHub | [![](/icons/github.svg) xogus3492](https://github.com/xogus3492) |
+| Tistory | [![](/icons/tistory.svg) taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
+`;

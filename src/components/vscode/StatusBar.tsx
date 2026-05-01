@@ -2,6 +2,7 @@
 
 import { GitBranch, AlertCircle, XCircle } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
+import { useUIStore } from "@/store/uiStore";
 
 const LANGUAGE_LABELS: Record<string, string> = {
   markdown: "Markdown",
@@ -16,6 +17,7 @@ const LANGUAGE_LABELS: Record<string, string> = {
 
 export default function StatusBar() {
   const { tabs, activeTabId } = useEditorStore();
+  const { language, toggleLanguage } = useUIStore();
   const activeTab = tabs.find((t) => t.id === activeTabId);
   const languageLabel = activeTab
     ? (LANGUAGE_LABELS[activeTab.language] ?? activeTab.language)
@@ -50,6 +52,13 @@ export default function StatusBar() {
         <span className="hover:bg-vs-accent-hover px-1 rounded cursor-default transition-colors font-medium">
           {languageLabel}
         </span>
+        <button
+          onClick={toggleLanguage}
+          className="hover:bg-vs-accent-hover px-1.5 rounded cursor-pointer transition-colors font-semibold tracking-wide"
+          title="Toggle language"
+        >
+          {language === "ko" ? "KO" : "EN"}
+        </button>
       </div>
     </footer>
   );

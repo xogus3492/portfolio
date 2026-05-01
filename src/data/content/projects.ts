@@ -618,3 +618,615 @@ export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inli
 - [![](/icons/github.svg) Front_Android](https://github.com/xogus3492/Front_Android)
 - [![](/icons/notion.png) 맞춤형 쇼핑몰 추천 서비스 FYB](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
 `;
+
+export const RUNDOMMATE_CONTENT_EN = `# <img src="/icons/rdm-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> RUNDOMMATE
+
+**Period:** 2026.02 ~ Present &nbsp;&nbsp; **Type:** Team Project &nbsp;&nbsp; **Launch:** Q3 2026
+
+## Team & Role
+
+| Composition | Role |
+|-------------|------|
+| PM ×1, Full-stack ×1, Front-end ×2, Back-end ×1, Design ×2 | **Full-stack (Infra · Backend · Web)** |
+
+## Service Overview
+
+> **RUNDOMMATE** is a running community platform where runners can form crews, run together, and grow.
+>
+> The matching system lets users explore nearby RUNDOMMATE users based on their current location and receive suggestions for running mates.
+> GPS-based course recommendations, real-time location sharing, crew feeds, and chat cover the full running lifecycle.
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Backend | Java 17, Spring Boot 3.4, Spring Security, JPA, PostGIS |
+| Database | PostgreSQL 16, Redis |
+| Infra | AWS (ECS Fargate, RDS, ElastiCache, ALB, ECR, Route53, Secrets Manager) |
+| IaC | Terraform (dev / prod environments) |
+| CI/CD | GitHub Actions |
+| Real-time | WebSocket (STOMP), FCM |
+| Web Admin | Next.js 16, TypeScript, Tailwind CSS v4, Zustand, Recharts |
+
+---
+
+## Infrastructure — Full AWS Stack with Terraform IaC
+
+I designed the AWS architecture and managed it declaratively as code via Terraform, with separate dev and prod environments.
+
+### VPC Network Design
+
+The network strategy differs by environment.
+Dev places ECS in public subnets without a NAT Gateway to minimize cost.
+Prod isolates ECS in private subnets and uses VPC Endpoints to reduce NAT data transfer costs.
+
+\`\`\`hcl
+# infra/server/vpc.tf
+resource "aws_subnet" "private" {
+  count             = length(var.availability_zones)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones))
+  availability_zone = var.availability_zones[count.index]
+}
+
+# Prod: bypass NAT when pulling ECR images → reduces data transfer cost
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  count               = var.enable_vpc_endpoints ? 1 : 0
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.\${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}
+\`\`\`
+
+### ECS Fargate + Auto Scaling
+
+Container-based zero-downtime deployment.
+Tasks auto-scale between 2 and 10 based on CPU / Memory thresholds.
+
+\`\`\`hcl
+# infra/server/ecs.tf
+resource "aws_appautoscaling_policy" "cpu" {
+  name               = "\${local.prefix}-cpu-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value = 70.0
+  }
+}
+\`\`\`
+
+### CI/CD — GitHub Actions → ECR → ECS Zero-Downtime Deployment
+
+Changes to \`server/**\` automatically trigger build → image push → ECS rolling update.
+Sensitive credentials are injected from AWS Secrets Manager to prevent code exposure.
+
+\`\`\`yaml
+# .github/workflows/deploy-dev.yml
+jobs:
+  deploy:
+    steps:
+      - name: Build & Push to ECR
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: kosmo-dev-backend-service
+          cluster: kosmo-dev-cluster
+          wait-for-service-stability: true
+\`\`\`
+
+#### Terraform Plan Automation
+On changes to \`infra/**\`, GitHub Actions runs \`terraform plan\` and posts the result as a PR comment.
+\`terraform apply\` only runs on PR merge, keeping infra changes review-gated.
+
+---
+
+## Backend — Firebase Cloud Messaging (FCM) Push Notifications
+
+I integrated the Firebase Admin SDK and implemented the app push notification dispatch logic.
+
+FCM messages are composed per notification type (comments, crew feeds, crew schedules, etc.). Before sending, the recipient's notification preferences (Board / Crew / Running categories) are checked, and the message is delivered only to eligible device tokens. Broadcasts to all users filter by category preference at the DB query level to prevent unnecessary sends.
+
+Deep-link data for in-app navigation is included in the FCM \`data\` field, with the notification type used to auto-classify the category so both Android and iOS handle it consistently.
+
+Since Firebase service account JSON cannot be bundled into the ECS container or committed to Git, I switched the auth approach to inject credentials via an AWS Secrets Manager environment variable.
+
+---
+
+## Admin System — Operations Dashboard
+
+A back-office web service built with Next.js App Router.
+
+![Admin Dashboard](/screenshots/rdm-admin.png)
+
+### Dashboard
+
+Service status visualized with Recharts.
+- User count by role Pie Chart (ADMIN / MANAGER / NORMAL_USER / GUEST)
+- KPI cards: active users, running sessions, pending reports
+
+### Running Session Management
+
+- **Anomaly Detection & Highlight**: Sessions with abnormally long distance/duration are auto-detected and highlighted in the list
+- **Manual vs GPS Ratio Card**: Session type counts and ratios visualized as cards/badges, with a filter to switch between types
+- **Route Map Visualization**: GPS points rendered on a map in the session detail modal
+- **Per-User Stats Tab**: Analyze cumulative distance and session count for a specific user by username
+
+### Report Management
+
+Keyword search by reporter/reported user's username or fullName, with approve/reject actions directly from the list.
+
+### Mail Dispatch UI
+
+- **Layout Selector + Visual Editor**: Choose a simple text or header+body layout and edit via form
+- **Recipient Selection Modal**: Select specific users with checkboxes, select-all, and pagination
+- **Send History**: History updates immediately after sending, with success/failure stats
+
+### Competition Management
+
+Manual competition registration form (external link + details) with an option to auto-publish a post on registration.
+Manual post publication for already-saved competitions is also supported.
+
+### Production Security
+
+Admin and TMS page paths are obfuscated and access-blocked in production.
+The middleware branches by environment to prevent unnecessary exposure.
+
+A guide modal explaining each tab's functionality is added to help operators get up to speed quickly.
+
+---
+
+## TMS — Test Management System
+
+An in-house test management tool designed and implemented end-to-end (backend + frontend) to systematize the team's QA process.
+
+![TMS Defect Detail](/screenshots/rdm-tms-1.png)
+
+![TMS Defect Resolution](/screenshots/rdm-tms-2.png)
+
+The entire flow from defect registration to resolution confirmation is managed in one place.
+
+1. **Registration (Received)** — The reporter assigns a handler and registers a defect; the status starts as **Received**.
+2. **Resolution (In Progress)** — The handler reviews the defect, analyzes the cause, and works on a fix; the status updates to **In Progress**. On completion, the handler records the resolution notes and transitions to **Resolved**.
+3. **Confirmation (Confirmed)** — The reporter reviews the resolution and, if satisfied, closes it as **Confirmed**.
+
+A status change history is automatically recorded at each step so you can track who changed what and when.
+`;
+
+export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> Rehab Center Website
+
+**Period:** 2026.01 ~ Present &nbsp;&nbsp; **Type:** Individual Project (Freelance)
+
+> Freelance website development project
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Frontend | Next.js, React, TypeScript, Tailwind CSS, ESLint |
+| Tools | Cursor, Vercel |
+
+## Achievements
+
+- **Automated Workflow with Notion MCP Server**
+  - Client writes RFP in Notion → Agent detects new requirements → Validates and reflects in source code
+  - Automated requirement change response process to improve development productivity
+
+## Links
+
+- [![](/icons/github.svg) sm-rehabilitation-center-website](https://github.com/xogus3492/sm-rehabilitation-center-website)
+- 🌐 [Live Site](https://sm-rehabilitation-center.vercel.app/)
+`;
+
+export const LITTLE_BANK_CONTENT_EN = `# <img src="/icons/littlebank-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> LittleBank
+
+**Period:** 2025.03 ~ 2025.07 &nbsp;&nbsp; **Type:** Team Project
+
+## Team & Role
+
+| Composition | Role |
+|-------------|------|
+| App(PM) ×1, Back-end ×2, Design ×1 | **Back-end, PL** |
+
+## Service Overview
+
+> **LittleBank** is an app that motivates children to study by rewarding them when they complete learning missions set by their parents.
+>
+> Parent users can link with their child's account to monitor goals, set missions, and track achievements.
+
+## System Architecture
+
+![CI/CD Architecture](https://github.com/user-attachments/assets/37f4dbdb-5424-49b0-84a6-c40dbfecb4ab)
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Backend | Java 17, Spring Boot 3.x, Spring Security, JPA, QueryDSL |
+| Database | MySQL 8.0, Redis |
+| Infra | AWS, Docker, Nginx |
+| CI/CD | GitHub Actions, CodeDeploy |
+| External | Firebase, Amazon S3 |
+| Real-time | WebSocket (STOMP) |
+| Docs | Swagger |
+
+## Key Achievements
+
+### 1. CI/CD Pipeline Setup
+
+Set trigger conditions so deployment only runs when PRs are **merged** into \`develop\` / \`main\`, and configured the pipeline as GitHub Actions → S3 upload → AWS CodeDeploy.
+Config files are Base64-encoded in GitHub Secrets and restored at runtime to keep them out of the repo.
+
+\`\`\`yaml
+# .github/workflows/trigger-dev.yml
+on:
+  pull_request:
+    branches: [ develop ]
+    types: [ closed ]
+
+jobs:
+  build-and-deploy:
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Generate application.yml
+        run: echo "\${{ secrets.APPLICATION_YML }}" | base64 --decode > ./src/main/resources/application.yml
+      - name: Zip & Upload to S3
+        run: |
+          zip -r ./\${{ github.sha }}.zip .
+          aws s3 cp ./\${{ github.sha }}.zip s3://\${{ secrets.S3_BUCKET_NAME_DEV }}/deploy/\${{ github.sha }}.zip
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name littlebank-deploy \
+            --deployment-group-name env-dev
+\`\`\`
+
+Docker multi-stage build separates the build and runtime environments to minimize the final image size.
+
+\`\`\`dockerfile
+FROM amazoncorretto:17 AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew clean build -x test
+
+FROM amazoncorretto:17
+COPY --from=builder /app/build/libs/app.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+\`\`\`
+
+---
+
+### 2. Real-time Chat with WebSocket
+
+**STOMP CONNECT-stage JWT Authentication**
+
+JWT is validated at the STOMP \`CONNECT\` command stage rather than in the HTTP filter chain.
+Since HTTP filters don't run after the initial WebSocket upgrade, the channel interceptor protects the connection itself.
+
+\`\`\`java
+@Component
+public class StompChannelInterceptor implements ChannelInterceptor {
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            String token = extractBearerToken(accessor.getFirstNativeHeader("Authorization"));
+            if (tokenProvider.validateToken(token)) {
+                accessor.setUser(tokenProvider.getAuthentication(token));
+            }
+        }
+        return message;
+    }
+}
+\`\`\`
+
+**Chat Room Latest-First Ordering — Pre-stored displayIdx**
+
+When sorting chat rooms by the latest message, a naive approach requires a subquery per room to aggregate the latest message timestamp — N subqueries for N rooms.
+
+To solve this, a \`display_idx (LocalDateTime)\` column is added to the \`UserChatRoom\` table and **bulk-updated for all participants in a single UPDATE** at message send time.
+
+\`\`\`java
+// On message send — pre-store sort key at write time
+@Override
+public void updateDisplayIdxByRoomId(Long roomId) {
+    queryFactory
+        .update(ucr)
+        .set(ucr.displayIdx, LocalDateTime.now())
+        .where(ucr.room.id.eq(roomId))
+        .execute();
+}
+
+// On room list fetch — simple SELECT, no subquery
+List<Tuple> myRooms = queryFactory
+    .select(cr.id, ucr.customRoomName, ucr.displayIdx, ...)
+    .from(ucr).join(ucr.room, cr)
+    .where(ucr.user.id.eq(userId))
+    .fetch();
+\`\`\`
+
+This eliminates sort subqueries at read time, trading one bulk UPDATE per message send for improved read performance.
+
+**Unread Message Count Capped at 300**
+
+To limit COUNT query cost for large unread counts, a \`LIMIT 301\` is applied and the result is capped at 300.
+
+\`\`\`java
+Long count = queryFactory
+    .select(cm.id.count())
+    .from(cm)
+    .where(cm.room.id.eq(roomId), cm.id.gt(lastReadMessageId), ...)
+    .limit(MAX_UNREAD_MESSAGE_SHOW_COUNT + 1)
+    .fetchOne();
+
+return (int) Math.min(count, MAX_UNREAD_MESSAGE_SHOW_COUNT);
+\`\`\`
+
+---
+
+### 3. Payment Forgery Prevention + Auto Refund
+
+The server stores the amount before calling the Toss Payments approval API and compares after approval to prevent tampering.
+If an exception occurs during internal processing (point charge, history save) after approval, an immediate auto-refund is triggered.
+
+\`\`\`java
+public PaymentConfirmToUserResponse confirmPayment(Long userId, ConfirmPaymentRequest request) {
+    ResponseEntity<PaymentConfirmResponse> result = tossService.confirm(request);
+
+    if (result.getStatusCode().is2xxSuccessful()) {
+        try {
+            User user = userRepository.findById(userId).orElseThrow(...);
+            user.chargePoint(request.getAmount());
+            paymentRepository.save(Payment.builder()
+                .tossPaymentKey(result.getBody().getPaymentKey())
+                .amount(result.getBody().getTotalAmount())
+                ...
+                .build());
+            return PaymentConfirmToUserResponse.of(paymentHistory);
+
+        } catch (Exception e) {
+            tossService.cancelPayment(
+                result.getBody().getPaymentKey(),
+                result.getBody().getTotalAmount(),
+                "Error during payment processing"
+            );
+        }
+    }
+    throw new PointException(ErrorCode.PAYMENT_PROCESS_ERROR);
+}
+\`\`\`
+
+---
+
+### 4. Concurrency Control (Optimistic + Pessimistic Lock)
+
+**Chat Read Status — Optimistic Lock + Retry**
+
+When multiple users concurrently update message read status, conflicts can arise.
+An \`@Version\` column applies optimistic locking, with up to 100 backoff retries on conflict.
+
+\`\`\`java
+@Entity
+public class ChatMessage {
+    @Column(nullable = false)
+    private Integer readCount;
+
+    @Version
+    private Long version;
+}
+
+@Service
+@Async
+@Transactional
+public class AsyncChatMessageService {
+    private static final int MAX_RETRY = 100;
+
+    public void decreaseReadCounts(List<Long> messageIds) {
+        List<ChatMessage> messages = chatMessageRepository.findAllByIdIn(messageIds);
+        int retryCount = 0;
+
+        while (retryCount++ < MAX_RETRY) {
+            try {
+                messages.forEach(m -> { if (m.getReadCount() > 0) m.readMessage(); });
+                chatMessageRepository.saveAll(messages);
+                return;
+            } catch (ObjectOptimisticLockingFailureException e) {
+                Thread.sleep(100);
+            }
+        }
+    }
+}
+\`\`\`
+
+**Point Transfer — Pessimistic Lock**
+
+Since point balance debit/credit requires strict consistency, a \`PESSIMISTIC_WRITE\` lock is acquired at query time.
+
+\`\`\`java
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("SELECT u FROM User u WHERE u.id = :id")
+Optional<User> findByIdWithLock(@Param("id") Long userId);
+
+public CommonPointTransferResponse transferPoint(Long userId, PointTransferRequest request) {
+    User sender = userRepository.findByIdWithLock(userId).orElseThrow(...);
+    User receiver = userRepository.findByIdWithLock(request.getReceiverId()).orElseThrow(...);
+
+    if (sender.getPoint() < request.getPointAmount()) {
+        throw new PointException(ErrorCode.INSUFFICIENT_POINT_BALANCE);
+    }
+
+    sender.sendPoint(request.getPointAmount());
+    receiver.receivePoint(request.getPointAmount());
+}
+\`\`\`
+
+
+## Links
+
+[![](/icons/github.svg) littlebank-server](https://github.com/little-bank/littlebank-server)
+`;
+
+export const DEVHUB_CONTENT_EN = `# <img src="/icons/devhub-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> DEVHUB
+
+**Period:** 2024.07 ~ 2024.10 &nbsp;&nbsp; **Type:** Team Project
+
+> A project version control service for beginner developers who find it difficult to use source code management tools
+
+## Team & Role
+
+| Composition | Role |
+|-------------|------|
+| Front-end ×2, Back-end ×3 | **Back-end, PL** |
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Backend | Spring Boot, JPA, Spring Security, JWT |
+| Database | MySQL, Redis |
+| Infra | Nginx, Docker, AWS |
+
+## Team Contributions
+
+1. As PL, I reviewed teammates' code and managed code merging via GitHub.
+
+2. I designed and developed the core version control feature of the project.
+
+## Key Contributions
+
+### 1. Email Dispatch Performance Improvement
+
+The synchronous email dispatch was identified as a critical bottleneck in production, so it was refactored to asynchronous processing.
+
+\`\`\`
+Before: 4,159ms → After: 17ms  (99% reduction in response time)
+\`\`\`
+
+- [![](/icons/tistory.svg) Email dispatch performance improvement process](https://taehyeon-stroy.tistory.com/49)
+
+---
+
+### 2. Version Control Strategy — Snapshot vs Git
+
+Two strategies were evaluated for storing user project files on the server.
+
+**Snapshot approach**: Stores all files for every version → disk usage grows rapidly
+**Git approach**: Stores only diffs → space-efficient, adopted
+
+- [![](/icons/notion.png) Version control strategy decision process](https://wheat-eustoma-8a4.notion.site/4f6caacd19d746a5a77b2837725fd58c)
+
+---
+
+### 3. Concurrent Save Prevention
+
+When multiple team members upload files simultaneously, only the first save should succeed — but all were being saved unexpectedly.
+DB locking was applied to resolve data integrity issues from concurrent requests.
+
+- [![](/icons/tistory.svg) How to prevent concurrent saves](https://taehyeon-stroy.tistory.com/48)
+
+---
+
+### 4. AWS + Docker Deployment
+
+Experienced connecting RDS and deploying a Spring Boot project on EC2 with Docker.
+
+- [![](/icons/tistory.svg) AWS RDS connection process](https://taehyeon-stroy.tistory.com/50)
+- [![](/icons/tistory.svg) Deploying with Docker on EC2](https://taehyeon-stroy.tistory.com/51)
+
+## Links
+
+- [![](/icons/github.svg) devhub-server](https://github.com/Devs-Of-Kosmo/devhub-server)
+- [![](/icons/notion.png) Project Version Control Service DEVHUB](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
+`;
+
+export const BOARD_CONTENT_EN = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> Board Project
+
+**Period:** 2023.03 ~ 2023.05 &nbsp;&nbsp; **Type:** Team Project
+
+> A project aimed at production-level development through diverse technologies, code design, and code reviews for service optimization
+
+## Team & Role
+
+| Composition | Role |
+|-------------|------|
+| Leader ×1, Back-end ×2 | **Back-end** |
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Backend | Spring Boot, JPA, Querydsl |
+| Database | H2, Redis |
+
+## Troubleshooting
+
+### 1. JPA N+1 Problem
+
+When fetching posts, N additional queries were firing for the associated tag entities.
+Used \`@Query\` with JPQL **Fetch Join** to reduce N+1 queries to a single query.
+
+[![](/icons/tistory.svg) N+1 problem troubleshooting](https://taehyeon-stroy.tistory.com/5)
+
+---
+
+### 2. Post Like Concurrency Issue
+
+Concurrent API requests from multiple threads produced unexpected results.
+Reproduced the concurrency issue with **JMeter** load testing, then applied **Pessimistic Lock** on the record to ensure data integrity.
+
+[![](/icons/tistory.svg) Post like concurrency troubleshooting](https://taehyeon-stroy.tistory.com/6)
+
+## Links
+
+- [![](/icons/github.svg) Board](https://github.com/Cupid-Arrow-team/Board/tree/develop)
+`;
+
+export const FYB_CONTENT_EN = `# <img src="/icons/fyb-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> FYB (Fit Your Balance)
+
+**Period:** 2022.03 ~ 2022.11 &nbsp;&nbsp; **Type:** Team Project
+
+> A big-data-based personalized shopping mall recommendation service
+
+## Team & Role
+
+| Composition | Role |
+|-------------|------|
+| Back-end ×1, Android ×1, Design ×2 | **Android** |
+
+## Tech Stack
+
+| Area | Technologies |
+|------|-------------|
+| Mobile | Android, Java |
+| Network | Retrofit2, OkHttp3, Gson |
+
+## Responsibilities
+
+Android application implementation
+
+- REST API client implementation based on Retrofit2
+- Common header handling via OkHttp3 interceptor
+- JSON serialization/deserialization with Gson
+- Connecting big-data recommendation results to the Android UI
+
+## App Screenshots
+
+![FYB App Screen](https://github.com/xogus3492/Front_Android/assets/77439799/2070fa63-7ce0-4a0a-9d47-be6700323102)
+
+## Links
+
+- [![](/icons/github.svg) Front_Android](https://github.com/xogus3492/Front_Android)
+- [![](/icons/notion.png) Personalized Shopping Mall Recommendation Service FYB](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
+`;

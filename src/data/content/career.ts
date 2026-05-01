@@ -54,3 +54,58 @@ DB       Oracle
 `;
 
 export default CAREER_CONTENT;
+
+export const CAREER_CONTENT_EN = `## Hyundai Department Store App/Web Platform Development
+
+**Company:** PlayTogether | **Period:** 2025.04 ~ Present | **Position:** Junior / Developer
+
+&nbsp;
+
+### Responsibilities
+
+Backend development and maintenance of the Hyundai Department Store app/web platform.
+
+&nbsp;
+
+### Key Achievements
+
+#### 1. Coupon Info Query Performance Improvement
+
+Migrated coupon common info lookup from per-request DB queries to **Redis caching**
+
+\`\`\`
+Result: Page rendering speed improved by approximately 30–40%
+\`\`\`
+
+#### 2. Store Detail Data Query Optimization
+
+Optimized multiple queries from related data lookups into a **single query**
+
+\`\`\`
+Before: N queries
+After:  1 query
+\`\`\`
+
+#### 3. Hyundai Department Store App Integrated Sign-up Process Extension
+
+Developed additional sign-up process for a new partner service (NCP) within the Hyundai Department Store app.
+
+#### 4. Store Following Feature Development
+
+Developed a new "Store Following" screen and API for the Hyundai Department Store app.
+
+#### 5. Event Page Rendering Analysis & Documentation
+
+Analyzed the event page rendering flow, created a PPT diagram, and shared it with the team.
+
+&nbsp;
+
+### Tech Stack
+
+\`\`\`
+Backend  Spring, JSP
+DB       Oracle
+Tools    Confluence, Bamboo, Bitbucket
+\`\`\`
+
+`;

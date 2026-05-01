@@ -1,16 +1,22 @@
 import { FileNode } from "@/types";
-import SELF_INTRO_CONTENT from "./content/self_intro";
+import SELF_INTRO_CONTENT, { SELF_INTRO_CONTENT_EN } from "./content/self_intro";
 import {
   RUNDOMMATE_CONTENT,
+  RUNDOMMATE_CONTENT_EN,
   REHAB_CENTER_CONTENT,
+  REHAB_CENTER_CONTENT_EN,
   LITTLE_BANK_CONTENT,
+  LITTLE_BANK_CONTENT_EN,
   DEVHUB_CONTENT,
+  DEVHUB_CONTENT_EN,
   BOARD_CONTENT,
+  BOARD_CONTENT_EN,
   FYB_CONTENT,
+  FYB_CONTENT_EN,
 } from "./content/projects";
-import SKILLS_CONTENT from "./content/skills";
-import CAREER_CONTENT from "./content/career";
-import CERTIFICATE_CONTENT from "./content/certificate";
+import SKILLS_CONTENT, { SKILLS_CONTENT_EN } from "./content/skills";
+import CAREER_CONTENT, { CAREER_CONTENT_EN } from "./content/career";
+import CERTIFICATE_CONTENT, { CERTIFICATE_CONTENT_EN } from "./content/certificate";
 
 export const FILE_TREE: FileNode[] = [
   {
@@ -19,6 +25,7 @@ export const FILE_TREE: FileNode[] = [
     type: "file",
     language: "markdown",
     content: SELF_INTRO_CONTENT,
+    contentEn: SELF_INTRO_CONTENT_EN,
   },
   {
     id: "career",
@@ -31,6 +38,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: CAREER_CONTENT,
+        contentEn: CAREER_CONTENT_EN,
       },
     ],
   },
@@ -45,6 +53,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: RUNDOMMATE_CONTENT,
+        contentEn: RUNDOMMATE_CONTENT_EN,
         iconUrl: "/icons/rdm-icon.png",
       },
       {
@@ -53,6 +62,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: LITTLE_BANK_CONTENT,
+        contentEn: LITTLE_BANK_CONTENT_EN,
         iconUrl: "/icons/littlebank-icon.png",
       },
       {
@@ -61,6 +71,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: DEVHUB_CONTENT,
+        contentEn: DEVHUB_CONTENT_EN,
         iconUrl: "/icons/devhub-icon.png",
       },
       {
@@ -69,6 +80,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: REHAB_CENTER_CONTENT,
+        contentEn: REHAB_CENTER_CONTENT_EN,
         iconUrl: "/icons/house-icon.png",
       },
       {
@@ -77,6 +89,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: BOARD_CONTENT,
+        contentEn: BOARD_CONTENT_EN,
         iconUrl: "/icons/board-icon.png",
       },
       {
@@ -85,6 +98,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: FYB_CONTENT,
+        contentEn: FYB_CONTENT_EN,
         iconUrl: "/icons/fyb-icon.png",
       },
     ],
@@ -100,6 +114,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: SKILLS_CONTENT,
+        contentEn: SKILLS_CONTENT_EN,
       },
     ],
   },
@@ -114,6 +129,7 @@ export const FILE_TREE: FileNode[] = [
         type: "file",
         language: "markdown",
         content: CERTIFICATE_CONTENT,
+        contentEn: CERTIFICATE_CONTENT_EN,
       },
     ],
   },

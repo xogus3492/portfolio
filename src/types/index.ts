@@ -6,6 +6,7 @@ export interface FileNode {
   type: FileNodeType;
   language?: string;
   content?: string;
+  contentEn?: string;
   iconUrl?: string;
   children?: FileNode[];
 }
@@ -15,6 +16,7 @@ export interface EditorTab {
   name: string;
   language: string;
   content: string;
+  contentEn?: string;
   isPreview: boolean;
   iconUrl?: string;
 }

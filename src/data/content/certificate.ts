@@ -9,3 +9,13 @@ const CERTIFICATE_CONTENT = `# 자격증 (Certificate)
 `;
 
 export default CERTIFICATE_CONTENT;
+
+export const CERTIFICATE_CONTENT_EN = `# Certificate
+
+### 1. SQLD (SQL Developer)
+
+| | |
+|---|---|
+| Issuer | Korea Data Industry Promotion Agency |
+| Acquired | 2025.04 |
+`;

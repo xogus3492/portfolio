@@ -7,6 +7,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import "highlight.js/styles/github-dark-dimmed.css";
 import { useEditorStore } from "@/store/editorStore";
+import { useUIStore } from "@/store/uiStore";
 import WelcomeTab from "./WelcomeTab";
 
 // LineNumbers의 lineHeight와 반드시 일치해야 함
@@ -37,10 +38,16 @@ function LineNumbers({ count }: LineNumbersProps) {
 
 export default function Editor() {
   const { tabs, activeTabId } = useEditorStore();
+  const { language } = useUIStore();
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [lineCount, setLineCount] = useState(0);
+
+  const renderedContent =
+    language === "en" && activeTab?.contentEn
+      ? activeTab.contentEn
+      : activeTab?.content ?? "";
 
   useEffect(() => {
     const el = contentRef.current;
@@ -55,7 +62,7 @@ export default function Editor() {
     update();
 
     return () => ro.disconnect();
-  }, [activeTab?.id, activeTab?.content]);
+  }, [activeTab?.id, renderedContent]);
 
   if (!activeTab) {
     return <WelcomeTab />;
@@ -72,7 +79,7 @@ export default function Editor() {
       </div>
 
       {/* 콘텐츠가 스크롤 높이를 결정 — 실제 높이 측정 기준점 */}
-      <div key={activeTab.id} ref={contentRef} className="pt-6 pb-16 overflow-x-hidden editor-fade-in" style={{ paddingLeft: "3.5rem", paddingRight: "2rem" }}>
+      <div key={`${activeTab.id}-${language}`} ref={contentRef} className="pt-6 pb-16 overflow-x-hidden editor-fade-in" style={{ paddingLeft: "3.5rem", paddingRight: "2rem" }}>
         <div className="md-content max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -93,7 +100,7 @@ export default function Editor() {
               ),
             }}
           >
-            {activeTab.content}
+            {renderedContent}
           </ReactMarkdown>
         </div>
       </div>

@@ -59,3 +59,63 @@ const SKILLS_CONTENT = `# 기술 스택 (Skills)
 `;
 
 export default SKILLS_CONTENT;
+
+export const SKILLS_CONTENT_EN = `# Tech Stack (Skills)
+
+## Back-end
+
+| Tech | Level (⭐:Basic understanding, tried briefly · ⭐⭐:Used in project development · ⭐⭐⭐:Used in production service) |
+|------|------|
+| Spring Boot | ⭐⭐⭐ |
+| Spring Security | ⭐⭐⭐ |
+| JPA | ⭐⭐⭐ |
+| QueryDSL | ⭐⭐ |
+| Spring (Legacy) | ⭐⭐⭐ |
+| MyBatis | ⭐⭐⭐ |
+| JAVA | ⭐⭐⭐ |
+
+## Front-end
+
+| Tech | Level (⭐:Basic understanding, tried briefly · ⭐⭐:Used in project development · ⭐⭐⭐:Used in production service) |
+|------|------|
+| Next.js | ⭐ |
+| React | ⭐ |
+| TypeScript | ⭐ |
+
+## Database
+
+| Tech | Level (⭐:Basic understanding, tried briefly · ⭐⭐:Used in project development · ⭐⭐⭐:Used in production service) |
+|------|------|
+| MySQL | ⭐⭐ |
+| Oracle | ⭐⭐⭐ |
+| Postgres | ⭐ |
+| Redis | ⭐⭐ |
+
+## DevOps / Infra
+
+| Tech | Level (⭐:Basic understanding, tried briefly · ⭐⭐:Used in project development · ⭐⭐⭐:Used in production service) |
+|------|------|
+| Docker | ⭐⭐ |
+| Nginx | ⭐⭐ |
+| GitHub Actions | ⭐⭐ |
+| AWS EC2 | ⭐⭐ |
+| AWS ECS | ⭐⭐ |
+| AWS RDS | ⭐⭐ |
+| AWS CodeDeploy | ⭐⭐ |
+| AWS VPC | ⭐⭐ |
+
+## Mobile
+
+| Tech | Level (⭐:Basic understanding, tried briefly · ⭐⭐:Used in project development · ⭐⭐⭐:Used in production service) |
+|------|------|
+| Android (Java) | ⭐⭐ |
+| Flutter (Cross Platform) | ⭐ |
+
+## Tools
+
+\`\`\`
+📄 Documentation  Swagger, Confluence
+🧪 Load Testing   JMeter
+🤖 AI Tools       Cursor, Claude Code
+\`\`\`
+`;
