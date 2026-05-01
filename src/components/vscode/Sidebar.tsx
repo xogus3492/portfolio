@@ -3,6 +3,7 @@
 import { useUIStore } from "@/store/uiStore";
 import { FILE_TREE } from "@/data/fileTree";
 import FileTree from "./FileTree";
+import GitPanel from "./GitPanel";
 
 const PANEL_TITLES: Record<string, string> = {
   explorer: "EXPLORER",
@@ -56,6 +57,8 @@ export default function Sidebar() {
               </div>
               <FileTree nodes={FILE_TREE} />
             </>
+          ) : activePanel === "git" ? (
+            <GitPanel />
           ) : (
             <div className="flex items-center justify-center h-24 px-4">
               <p className="text-xs text-vs-text-muted text-center">
