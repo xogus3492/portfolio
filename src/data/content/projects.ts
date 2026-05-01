@@ -111,93 +111,15 @@ PR 머지 시에만 \`terraform apply\`가 실행되어 인프라 변경을 리�
 
 ---
 
-## 백엔드 — 주요 구현
+## 백엔드 — Firebase Cloud Messaging(FCM) 푸시 알림 구현
 
-### 1. FCM 개인화 알림 시스템
+Firebase Admin SDK를 연동하여 앱 푸시 알림 발송 로직을 담당했습니다.
 
-알림 도메인을 신규 설계하고, 카테고리별 수신 설정 필터링을 구현했습니다.
-날씨 알림을 대체하여 개인 러닝 데이터를 기반으로 한 동기부여 알림 스케줄러를 작성했습니다.
+알림 타입(댓글, 크루 피드, 크루 일정 등)별로 FCM 메시지를 구성하고, 수신자의 알림 수신 설정(게시판 / 크루 / 러닝 카테고리)을 확인한 뒤 조건을 만족하는 기기 토큰에만 발송하도록 설계했습니다. 전체 유저 대상 브로드캐스트는 카테고리 수신 설정을 DB 쿼리 레벨에서 필터링하여 불필요한 발송을 방지했습니다.
 
-\`\`\`java
-// DailyMotivationScheduler.java
-@Scheduled(cron = "0 0 7 * * *", zone = "Asia/Seoul")
-public void sendDailyMotivationNotification() {
-    LocalDate today = LocalDate.now(SEOUL);
-    LocalDate lastWeekSameDay = today.minusWeeks(1);
-    LocalDateTime thisWeekStart = today.with(DayOfWeek.MONDAY).atStartOfDay();
+앱 화면 이동을 위한 딥링크 정보는 FCM \`data\` 필드에 포함하고, 알림 타입으로 카테고리를 자동 분류해 Android / iOS 양쪽에서 동일하게 처리할 수 있도록 구조를 잡았습니다.
 
-    // 지난주 같은 요일 거리 · 이번 주 누적 거리 조회 후 개인화 문구 포함 전송
-    fcmTokenRepository.findAll(PageRequest.of(page, BATCH_SIZE)).forEach(token -> {
-        double lastWeekDist = runningSessionRepository.sumDistanceByUserAndDate(...);
-        double thisWeekDist = runningSessionRepository.sumDistanceSince(...);
-        String phrase = MOTIVATION_PHRASES[new Random().nextInt(MOTIVATION_PHRASES.length)];
-        fcmService.sendDirectToToken(token, buildTitle(thisWeekDist), phrase + " ...");
-    });
-}
-\`\`\`
-
-알림 발송 시 수신자의 카테고리별 설정(게시판/크루/러닝)을 DB 쿼리 레벨에서 필터링하여
-원하지 않는 알림이 발송되지 않도록 처리했습니다.
-
----
-
-### 2. Firebase 인증을 AWS Secrets Manager로 전환
-
-기존에는 \`firebase-service-account.json\` 파일을 classpath에 두었는데, ECS 컨테이너 환경에서는
-파일을 직접 배포하기 어렵고 Git에 포함되어서도 안 됩니다.
-\`FIREBASE_SERVICE_ACCOUNT_JSON\` 환경변수를 1순위로 읽어 Secrets Manager에서 직접 주입받도록 변경하고,
-로컬 개발 환경은 classpath 파일 폴백을 유지했습니다.
-
----
-
-### 3. 어드민 — 메일 발송 시스템
-
-이메일 템플릿 CRUD와 유저 타겟팅 발송을 구현했습니다.
-발송은 \`@Async\`로 처리하여 API 응답을 블로킹하지 않도록 했습니다.
-
-\`\`\`java
-// AdminMailService.java
-@Async
-public void sendMail(MailSendRequest request) {
-    List<User> targets = userRepository.findAllById(request.getUserIds());
-    targets.forEach(user -> {
-        try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-            helper.setTo(user.getEmail());
-            helper.setSubject(request.getSubject());
-            helper.setText(request.getBody(), true); // HTML
-            mailSender.send(msg);
-        } catch (MessagingException e) {
-            log.error("메일 발송 실패: {}", user.getEmail(), e);
-        }
-    });
-}
-\`\`\`
-
-발송 이력은 별도 테이블(V26 마이그레이션)에 저장하고 조회 API를 제공했습니다.
-
----
-
-### 4. 어드민 — 대회 등록 + 자동 게시글 발행
-
-어드민이 대회를 등록하면 \`CompetitionAutoPostService\`가 \`RACE_INFO\` 카테고리 게시글을
-자동으로 생성합니다. 게시글 자동 발행 여부를 선택할 수 있고, 수동 발행도 지원합니다.
-
----
-
-### 5. 어드민 — 러닝 세션 수동입력 vs GPS 통계
-
-수동입력과 GPS 세션을 구분하는 필터 파라미터와, 두 유형의 건수 비율을 반환하는
-엔드포인트를 추가했습니다. 사용자별 누적 통계 조회도 \`username\` 파라미터로 지원합니다.
-
----
-
-### 6. 트러블슈팅 — 마이그레이션 중 NOT NULL 컬럼 추가 오류
-
-\`chat_rooms\` 테이블에 \`ownerMuted\`, \`requesterMuted\` 컬럼을 NOT NULL로 추가하는 마이그레이션이 실행될 때,
-기존 행에 null이 들어가 제약 조건 위반이 발생했습니다.
-\`@Column(columnDefinition = "boolean not null default false")\`로 DB 기본값을 명시해 해결했습니다.
+또한 ECS 컨테이너 환경에서 Firebase 서비스 계정 JSON을 파일로 배포하기 어렵고 Git에 포함해서도 안 되는 문제가 있어, AWS Secrets Manager에서 환경변수로 주입받도록 인증 방식을 전환했습니다.
 
 ---
 
