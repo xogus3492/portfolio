@@ -13,7 +13,29 @@ import {
   ArrowUp,
   Loader2,
   AlertCircle,
+  FileText,
+  Plus,
 } from "lucide-react";
+
+interface ChangedFile {
+  name: string;
+  path: string;
+  status: "M" | "A" | "D" | "U";
+}
+
+const CHANGED_FILES: ChangedFile[] = [
+  { name: "GitPanel.tsx",  path: "src/components/vscode", status: "M" },
+  { name: "projects.ts",   path: "src/data/content",      status: "M" },
+  { name: "self_intro.ts", path: "src/data/content",      status: "M" },
+  { name: "globals.css",   path: "src/app",               status: "M" },
+];
+
+const STATUS_COLOR: Record<string, string> = {
+  M: "#e2c08d",
+  A: "#73c991",
+  D: "#f44747",
+  U: "#73c991",
+};
 
 interface Commit {
   sha: string;
@@ -188,11 +210,43 @@ export default function GitPanel() {
           </div>
         </div>
 
-        <div className="px-2 pb-3">
+        <div className="px-2 pb-1.5">
           <button className="w-full flex items-center justify-center gap-1.5 bg-vs-accent hover:bg-vs-accent-hover text-white rounded py-1 transition-colors text-[12px]">
-            <RefreshCw size={11} />
+            <Check size={12} />
             커밋
           </button>
+        </div>
+
+        {/* 변경 파일 영역 */}
+        <div className="border-t border-vs-border-subtle">
+          <div className="flex items-center h-6 px-2 group hover:bg-vs-hover transition-colors">
+            <ChevronDown size={12} className="text-vs-text-muted mr-1 shrink-0" />
+            <span className="text-[11px] text-vs-text-muted font-semibold tracking-widest uppercase flex-1">
+              변경 사항
+            </span>
+            <div className="flex items-center gap-px opacity-0 group-hover:opacity-100 transition-opacity">
+              <IconBtn title="모두 스테이지"><Plus size={12} /></IconBtn>
+              <IconBtn title="모두 되돌리기"><RefreshCw size={11} /></IconBtn>
+            </div>
+          </div>
+          {CHANGED_FILES.map((file) => (
+            <div
+              key={file.name}
+              className="flex items-center gap-1.5 px-3 py-0.5 hover:bg-vs-hover transition-colors group h-[22px]"
+            >
+              <FileText size={12} className="text-vs-text-dim shrink-0" />
+              <span className="text-[11px] text-vs-text truncate flex-1">{file.name}</span>
+              <span className="text-[10px] text-vs-text-dim truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                {file.path}
+              </span>
+              <span
+                className="text-[11px] font-semibold shrink-0 ml-1 w-3 text-center"
+                style={{ color: STATUS_COLOR[file.status] }}
+              >
+                {file.status}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
