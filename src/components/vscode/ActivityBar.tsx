@@ -1,6 +1,7 @@
 "use client";
 
-import { Files, Search, GitBranch, Puzzle, Settings } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Files, Search, GitBranch, Puzzle, Settings, Languages } from "lucide-react";
 import { useUIStore } from "@/store/uiStore";
 import { ActivityPanel } from "@/types";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,61 @@ const PANELS: { id: ActivityPanel; icon: React.ElementType; label: string }[] =
     { id: "git", icon: GitBranch, label: "Source Control" },
     { id: "extensions", icon: Puzzle, label: "Extensions" },
   ];
+
+function SettingsMenu() {
+  const { language, setLanguage } = useUIStore();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      {open && (
+        <div className="absolute bottom-full left-full mb-1 ml-1 w-44 bg-vs-sidebar border border-vs-border-subtle rounded shadow-lg z-50 py-1 text-sm text-vs-text">
+          <div className="px-3 py-1.5 text-xs text-vs-text-muted uppercase tracking-widest font-semibold">
+            Language
+          </div>
+          {(["ko", "en"] as const).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => { setLanguage(lang); setOpen(false); }}
+              className={cn(
+                "flex items-center gap-2 w-full px-3 py-1.5 hover:bg-vs-hover transition-colors cursor-pointer",
+                language === lang && "text-vs-accent"
+              )}
+            >
+              <Languages size={13} />
+              <span>{lang === "ko" ? "한국어 (KO)" : "English (EN)"}</span>
+              {language === lang && <span className="ml-auto text-vs-accent">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        title="Settings"
+        aria-label="Settings"
+        aria-expanded={open}
+        className={cn(
+          "flex items-center justify-center w-12 h-12 transition-opacity cursor-pointer",
+          open ? "opacity-100" : "opacity-50 hover:opacity-100"
+        )}
+      >
+        <Settings size={24} strokeWidth={1.5} />
+      </button>
+    </div>
+  );
+}
 
 export default function ActivityBar() {
   const { activePanel, isSidebarOpen, setActivePanel, toggleSidebar } =
@@ -55,13 +111,7 @@ export default function ActivityBar() {
       </div>
 
       <div className="flex flex-col">
-        <button
-          title="Settings"
-          aria-label="Settings"
-          className="flex items-center justify-center w-12 h-12 opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
-        >
-          <Settings size={24} strokeWidth={1.5} />
-        </button>
+        <SettingsMenu />
       </div>
     </aside>
   );

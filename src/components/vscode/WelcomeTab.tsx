@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Languages } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
 import { useUIStore } from "@/store/uiStore";
 import { FLAT_FILES } from "@/data/fileTree";
@@ -93,11 +94,20 @@ const ABOUT_TEXT = {
 
 export default function WelcomeTab() {
   const allFiles = FLAT_FILES;
-  const { language } = useUIStore();
+  const { language, toggleLanguage } = useUIStore();
   const t = ABOUT_TEXT[language];
 
   return (
-    <div className="flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16 editor-fade-in">
+    <div className="relative flex items-start justify-center w-full h-full overflow-y-auto bg-vs-bg p-8 md:p-16 editor-fade-in">
+      <button
+        onClick={toggleLanguage}
+        title="Toggle language"
+        className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold text-vs-text-muted hover:text-vs-text hover:bg-vs-hover transition-colors cursor-pointer"
+      >
+        <Languages size={13} />
+        <span>{language === "ko" ? "KO" : "EN"}</span>
+      </button>
+
       <div className="w-full max-w-2xl">
         <div className="mb-12">
           <pre className="text-vs-accent text-xs leading-tight font-mono mb-6 hidden sm:block">
@@ -180,3 +190,4 @@ export default function WelcomeTab() {
     </div>
   );
 }
+
