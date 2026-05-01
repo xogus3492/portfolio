@@ -127,6 +127,8 @@ Firebase Admin SDK를 연동하여 앱 푸시 알림 발송 로직을 담당했�
 
 Next.js App Router로 구축한 백오피스 웹 서비스입니다.
 
+![어드민 대시보드](/screenshots/rdm-admin.png)
+
 ### 대시보드
 
 Recharts 기반으로 서비스 현황을 시각화했습니다.
@@ -169,34 +171,17 @@ Recharts 기반으로 서비스 현황을 시각화했습니다.
 
 팀 내 QA 프로세스를 체계화하기 위해 백엔드와 프론트를 모두 직접 설계·구현했습니다.
 
-### 백엔드
+![TMS 결함 상세](/screenshots/rdm-tms-1.png)
 
-엔티티 10개 이상(TmsProject, TmsProjectMember, TmsTestPlan, TmsTestCase, TmsTestExecution,
-TmsDefect, TmsDefectComment, TmsDefectAttachment, TmsDefectHistory 등)을 설계하고
-레포지토리·서비스·컨트롤러까지 전 계층을 구현했습니다.
-DB 스키마는 V28 Flyway 마이그레이션 단일 파일로 관리합니다.
+![TMS 결함 조치내용](/screenshots/rdm-tms-2.png)
 
-결함 상태·심각도 enum을 도메인 요구에 맞게 설계하고, 담당자 지정용 관리자 목록 조회 API도 추가했습니다.
+결함 등록부터 조치 확인까지 하나의 흐름으로 관리됩니다.
 
-### 결함 추적 (Defect Tracking)
+1. **결함 등록 (접수)** — 등록자가 담당자를 지정하여 결함을 등록하면 상태가 **접수**로 시작됩니다.
+2. **조치 (조치중)** — 담당자가 결함 내용을 확인하고 원인 분석·조치를 진행하면 상태가 **조치중**으로 업데이트됩니다. 조치가 완료되면 조치 내용을 작성하고 **조치완료** 상태로 전환합니다.
+3. **확인 (확인완료)** — 등록자가 조치 내용을 검토하고 정상 처리됐다고 판단하면 **확인완료**로 최종 마감합니다.
 
-\`\`\`
-상태 흐름: OPEN → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED (REOPENED 포함)
-우선순위: HIGH / MEDIUM / LOW
-심각도:   CRITICAL / MAJOR / MINOR / TRIVIAL
-\`\`\`
-
-결함 등록 시 제목·설명·재현 순서·환경 정보를 입력하고, S3에 첨부파일(스크린샷, 로그)을 업로드할 수 있습니다.
-코멘트는 본인 작성 건만 수정·삭제 가능하도록 제한했습니다.
-상태가 바뀔 때마다 변경 이력(TmsDefectHistory)을 자동 저장해 추적할 수 있습니다.
-
-### 프론트 주요 구현
-
-- **URL 파라미터 기반 필터 상태 유지**: 결함 목록 필터(상태·심각도 등)를 URL 쿼리스트링에 동기화해 새로고침·뒤로가기 후에도 필터가 유지됩니다.
-- **담당자 이름 검색 선택 컴포넌트**: 관리자 목록을 fullName으로 검색해 선택하는 커스텀 드롭다운을 구현했습니다.
-- **결함 알림 벨**: 새 결함·코멘트 발생 시 알림을 표시하는 벨 아이콘 기능을 추가했습니다.
-- **textarea 자동 높이 조절**: 결함 상세·재현 순서·조치 내용 textarea가 내용에 따라 높이를 자동 조정합니다.
-- **내 담당 결함 페이지**: 본인에게 할당된 결함만 필터링해 확인·완료 처리할 수 있는 전용 뷰를 제공합니다.
+각 단계마다 상태 변경 이력이 자동으로 기록되어, 누가 언제 어떤 상태로 변경했는지 추적할 수 있습니다.
 `;
 
 export const REHAB_CENTER_CONTENT = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
