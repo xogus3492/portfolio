@@ -1,12 +1,12 @@
 export const RUNDOMMATE_CONTENT = `# <img src="/icons/rdm-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 런덤메이트 (RUNDOMMATE)
 
-**기간:** 2025.02 ~ 진행중 &nbsp;&nbsp; **유형:** 팀 프로젝트 &nbsp;&nbsp; **상태:** 🚀 출시 예정
+**기간:** 2025.02 ~ 진행중 &nbsp;&nbsp; **유형:** 팀 프로젝트 &nbsp;&nbsp; **상태:** 2025년 3분기 출시 예정
 
 ## 팀 구성 & 역할
 
 | 구성 | 역할 |
 |------|------|
-| App 2명, Back-end 1명, Design 1명 | **Full-stack (Infra · Backend · Web)** |
+| PM 1명, Full-stack 1명, Front-end 2명, Back-end 1명, Design 2명 | **Full-stack (Infra · Backend · Web)** |
 
 ## 서비스 소개
 
