@@ -191,7 +191,7 @@ export default function GitPanel() {
         <div className="px-2 pb-3">
           <button className="w-full flex items-center justify-center gap-1.5 bg-vs-accent hover:bg-vs-accent-hover text-white rounded py-1 transition-colors text-[12px]">
             <RefreshCw size={11} />
-            변경 내용 동기화{commits.length > 0 ? ` ${commits.length}↑` : ""}
+            커밋
           </button>
         </div>
       </div>
