@@ -111,47 +111,93 @@ PR 머지 시에만 \`terraform apply\`가 실행되어 인프라 변경을 리�
 
 ---
 
-## 백엔드 — Spring Boot 기반 러닝 플랫폼
+## 백엔드 — 주요 구현
 
-### Docker 멀티스테이지 빌드
+### 1. FCM 개인화 알림 시스템
 
-빌드 환경과 실행 환경을 분리해 최종 이미지 크기를 최소화했습니다.
-non-root 사용자로 실행하여 컨테이너 보안을 강화했습니다.
+알림 도메인을 신규 설계하고, 카테고리별 수신 설정 필터링을 구현했습니다.
+날씨 알림을 대체하여 개인 러닝 데이터를 기반으로 한 동기부여 알림 스케줄러를 작성했습니다.
 
-\`\`\`dockerfile
-FROM eclipse-temurin:17-jdk AS builder
-WORKDIR /app
-COPY . .
-RUN ./gradlew clean build -x test
+\`\`\`java
+// DailyMotivationScheduler.java
+@Scheduled(cron = "0 0 7 * * *", zone = "Asia/Seoul")
+public void sendDailyMotivationNotification() {
+    LocalDate today = LocalDate.now(SEOUL);
+    LocalDate lastWeekSameDay = today.minusWeeks(1);
+    LocalDateTime thisWeekStart = today.with(DayOfWeek.MONDAY).atStartOfDay();
 
-FROM eclipse-temurin:17-jre
-RUN addgroup --system spring && adduser --system spring --ingroup spring
-USER spring:spring
-HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:8000/api/health || exit 1
-COPY --from=builder /app/build/libs/*.jar app.jar
-ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+    // 지난주 같은 요일 거리 · 이번 주 누적 거리 조회 후 개인화 문구 포함 전송
+    fcmTokenRepository.findAll(PageRequest.of(page, BATCH_SIZE)).forEach(token -> {
+        double lastWeekDist = runningSessionRepository.sumDistanceByUserAndDate(...);
+        double thisWeekDist = runningSessionRepository.sumDistanceSince(...);
+        String phrase = MOTIVATION_PHRASES[new Random().nextInt(MOTIVATION_PHRASES.length)];
+        fcmService.sendDirectToToken(token, buildTitle(thisWeekDist), phrase + " ...");
+    });
+}
 \`\`\`
 
-### PostGIS 기반 위치 서비스
+알림 발송 시 수신자의 카테고리별 설정(게시판/크루/러닝)을 DB 쿼리 레벨에서 필터링하여
+원하지 않는 알림이 발송되지 않도록 처리했습니다.
 
-일반 RDB 대신 PostgreSQL PostGIS 확장을 활용해 GPS 기반 코스 검색과
-실시간 위치 계산을 데이터베이스 레벨에서 처리합니다.
+---
 
-### WebSocket 실시간 채팅
+### 2. Firebase 인증을 AWS Secrets Manager로 전환
 
-STOMP 프로토콜로 채팅을 구현하고, CONNECT 단계에서 JWT를 검증합니다.
-단일 인스턴스에서는 Simple Broker를 사용하고, 다중 인스턴스 환경에서는
-RabbitMQ STOMP Relay로 전환할 수 있도록 환경변수 기반 브로커 모드 전환 구조를 설계했습니다.
+기존에는 \`firebase-service-account.json\` 파일을 classpath에 두었는데, ECS 컨테이너 환경에서는
+파일을 직접 배포하기 어렵고 Git에 포함되어서도 안 됩니다.
+\`FIREBASE_SERVICE_ACCOUNT_JSON\` 환경변수를 1순위로 읽어 Secrets Manager에서 직접 주입받도록 변경하고,
+로컬 개발 환경은 classpath 파일 폴백을 유지했습니다.
 
-### JWT + Redis 토큰 블랙리스트
+---
 
-로그아웃 시 토큰을 Redis에 블랙리스트로 등록하고 요청마다 검사합니다.
-Kakao · Google · Naver OAuth2 소셜 로그인도 함께 지원합니다.
+### 3. 어드민 — 메일 발송 시스템
 
-### 데이터베이스 마이그레이션 (Flyway)
+이메일 템플릿 CRUD와 유저 타겟팅 발송을 구현했습니다.
+발송은 \`@Async\`로 처리하여 API 응답을 블로킹하지 않도록 했습니다.
 
-V1~V28 마이그레이션 스크립트로 스키마 변경 이력을 관리합니다.
-TMS 전체 테이블(V28)도 마이그레이션 단위로 분리하여 배포 안전성을 확보했습니다.
+\`\`\`java
+// AdminMailService.java
+@Async
+public void sendMail(MailSendRequest request) {
+    List<User> targets = userRepository.findAllById(request.getUserIds());
+    targets.forEach(user -> {
+        try {
+            MimeMessage msg = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setSubject(request.getSubject());
+            helper.setText(request.getBody(), true); // HTML
+            mailSender.send(msg);
+        } catch (MessagingException e) {
+            log.error("메일 발송 실패: {}", user.getEmail(), e);
+        }
+    });
+}
+\`\`\`
+
+발송 이력은 별도 테이블(V26 마이그레이션)에 저장하고 조회 API를 제공했습니다.
+
+---
+
+### 4. 어드민 — 대회 등록 + 자동 게시글 발행
+
+어드민이 대회를 등록하면 \`CompetitionAutoPostService\`가 \`RACE_INFO\` 카테고리 게시글을
+자동으로 생성합니다. 게시글 자동 발행 여부를 선택할 수 있고, 수동 발행도 지원합니다.
+
+---
+
+### 5. 어드민 — 러닝 세션 수동입력 vs GPS 통계
+
+수동입력과 GPS 세션을 구분하는 필터 파라미터와, 두 유형의 건수 비율을 반환하는
+엔드포인트를 추가했습니다. 사용자별 누적 통계 조회도 \`username\` 파라미터로 지원합니다.
+
+---
+
+### 6. 트러블슈팅 — 마이그레이션 중 NOT NULL 컬럼 추가 오류
+
+\`chat_rooms\` 테이블에 \`ownerMuted\`, \`requesterMuted\` 컬럼을 NOT NULL로 추가하는 마이그레이션이 실행될 때,
+기존 행에 null이 들어가 제약 조건 위반이 발생했습니다.
+\`@Column(columnDefinition = "boolean not null default false")\`로 DB 기본값을 명시해 해결했습니다.
 
 ---
 
@@ -159,65 +205,76 @@ TMS 전체 테이블(V28)도 마이그레이션 단위로 분리하여 배포 �
 
 Next.js App Router로 구축한 백오피스 웹 서비스입니다.
 
-### 실시간 대시보드
+### 대시보드
 
-Recharts 기반 차트로 서비스 현황을 한눈에 파악할 수 있습니다.
+Recharts 기반으로 서비스 현황을 시각화했습니다.
+- 권한별 사용자 수 Pie Chart (ADMIN / MANAGER / NORMAL_USER / GUEST)
+- KPI 카드: 활성 사용자, 러닝 세션, 미처리 신고 건수
 
-- **KPI 카드**: 활성 사용자, 신규 크루, 러닝 세션, 미처리 신고 건수
-- **주간 활동 추이**: Area Chart (게시글 / 크루 / 러닝 세션)
-- **권한별 사용자 분포**: Pie Chart
-- **최근 관리 작업 로그**: 5건 요약 + 전체 보기
+### 러닝 세션 관리
 
-### 콘텐츠 & 사용자 관리
+- **이상 세션 감지 & 하이라이트**: 비정상적으로 긴 거리·시간 세션을 자동 감지해 목록에서 강조 표시
+- **수동입력 vs GPS 비율 카드**: 세션 유형별 건수와 비율을 카드·배지 형태로 시각화, 필터로 유형별 목록 전환
+- **러닝 경로 지도 시각화**: 세션 상세 모달에서 GPS 포인트를 지도에 렌더링
+- **사용자별 통계 탭**: username으로 특정 유저의 누적 거리·횟수 분석
 
-| 기능 | 설명 |
-|------|------|
-| 신고 관리 | 신고 목록 필터링, 상세 조회, 처리(승인/거절) |
-| 게시글/댓글 | 부적절 콘텐츠 삭제, 신고 내역 연동 |
-| 크루 관리 | 크루 승인/거절, 멤버 관리 |
-| 달리기 관리 | 활성 러닝 세션 모니터링, 비정상 활동 감지 |
-| 대회 관리 | Selenium 자동 크롤링 데이터 검증 및 승인 |
+### 신고 관리
 
-### 메일 발송 시스템
+신고자·피신고자의 username과 fullName으로 키워드 검색을 지원하며,
+목록에서 바로 승인/거절 처리할 수 있습니다.
 
-- 마크다운 기반 이메일 템플릿 CRUD
-- 사용자 조건 필터링 후 대량 발송
-- 발송 이력 조회 (성공 / 실패 통계)
+### 메일 발송 UI
+
+- **레이아웃 선택 + 비주얼 에디터**: 단순 텍스트 / 헤더+본문 레이아웃을 선택한 뒤 폼으로 편집
+- **수신자 선택 모달**: 체크박스 + 전체선택 + 페이지네이션으로 특정 유저를 직접 선택
+- **발송 내역**: 발송 후 즉시 내역 갱신, 성공/실패 통계 확인
+
+### 대회 관리
+
+수동 대회 등록 폼(외부 링크·정보 입력)과, 등록 시 게시글 자동 발행 여부 선택 UI를 구현했습니다.
+이미 저장된 대회의 게시글 수동 발행 기능도 추가했습니다.
+
+### 운영 환경 보안
+
+운영 환경에서 어드민·TMS 페이지 경로를 난독화하고 접근을 차단했습니다.
+미들웨어에서 환경별로 경로를 분기하여 불필요한 노출을 방지했습니다.
+
+각 탭마다 기능 설명 가이드 모달을 추가해 운영자가 기능을 빠르게 파악할 수 있도록 했습니다.
 
 ---
 
 ## TMS — 테스트 관리 시스템
 
-팀 내 QA 프로세스를 체계화하기 위해 백엔드와 웹을 함께 직접 설계·구현한 사내 테스트 관리 도구입니다.
+팀 내 QA 프로세스를 체계화하기 위해 백엔드와 프론트를 모두 직접 설계·구현했습니다.
 
-### 프로젝트 & 멤버 관리
+### 백엔드
 
-프로젝트 단위로 테스트 활동을 격리합니다.
-OWNER / MANAGER / TESTER / VIEWER 4가지 역할로 접근 권한을 제어합니다.
+엔티티 10개 이상(TmsProject, TmsProjectMember, TmsTestPlan, TmsTestCase, TmsTestExecution,
+TmsDefect, TmsDefectComment, TmsDefectAttachment, TmsDefectHistory 등)을 설계하고
+레포지토리·서비스·컨트롤러까지 전 계층을 구현했습니다.
+DB 스키마는 V28 Flyway 마이그레이션 단일 파일로 관리합니다.
 
-### 테스트 계획 & 케이스
-
-\`\`\`
-테스트 계획 (TestPlan)
-  └─ 테스트 케이스 (TestCase)
-       └─ 테스트 실행 (TestExecution)
-            └─ 결과: PASSED / FAILED / BLOCKED / SKIPPED
-\`\`\`
+결함 상태·심각도 enum을 도메인 요구에 맞게 설계하고, 담당자 지정용 관리자 목록 조회 API도 추가했습니다.
 
 ### 결함 추적 (Defect Tracking)
 
-- **우선순위**: HIGH / MEDIUM / LOW
-- **심각도**: CRITICAL / MAJOR / MINOR / TRIVIAL
-- **상태 흐름**: OPEN → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED (REOPENED 포함)
-- **첨부파일**: S3 업로드 연동 (스크린샷, 로그)
-- **코멘트 스레드 & 변경 이력**: 모든 상태 변경을 이력으로 추적
+\`\`\`
+상태 흐름: OPEN → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED (REOPENED 포함)
+우선순위: HIGH / MEDIUM / LOW
+심각도:   CRITICAL / MAJOR / MINOR / TRIVIAL
+\`\`\`
 
-### TMS 대시보드
+결함 등록 시 제목·설명·재현 순서·환경 정보를 입력하고, S3에 첨부파일(스크린샷, 로그)을 업로드할 수 있습니다.
+코멘트는 본인 작성 건만 수정·삭제 가능하도록 제한했습니다.
+상태가 바뀔 때마다 변경 이력(TmsDefectHistory)을 자동 저장해 추적할 수 있습니다.
 
-- 프로젝트별 테스트 진행률
-- 결함 밀도 (Open / Resolved / Closed 비율)
-- 테스트 커버리지
-- 팀 멤버별 결함 할당 현황
+### 프론트 주요 구현
+
+- **URL 파라미터 기반 필터 상태 유지**: 결함 목록 필터(상태·심각도 등)를 URL 쿼리스트링에 동기화해 새로고침·뒤로가기 후에도 필터가 유지됩니다.
+- **담당자 이름 검색 선택 컴포넌트**: 관리자 목록을 fullName으로 검색해 선택하는 커스텀 드롭다운을 구현했습니다.
+- **결함 알림 벨**: 새 결함·코멘트 발생 시 알림을 표시하는 벨 아이콘 기능을 추가했습니다.
+- **textarea 자동 높이 조절**: 결함 상세·재현 순서·조치 내용 textarea가 내용에 따라 높이를 자동 조정합니다.
+- **내 담당 결함 페이지**: 본인에게 할당된 결함만 필터링해 확인·완료 처리할 수 있는 전용 뷰를 제공합니다.
 `;
 
 export const REHAB_CENTER_CONTENT = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
