@@ -24,10 +24,9 @@ interface ChangedFile {
 }
 
 const CHANGED_FILES: ChangedFile[] = [
-  { name: "GitPanel.tsx",  path: "src/components/vscode", status: "M" },
-  { name: "projects.ts",   path: "src/data/content",      status: "M" },
-  { name: "self_intro.ts", path: "src/data/content",      status: "M" },
-  { name: "globals.css",   path: "src/app",               status: "M" },
+  { name: "자기소개.md",   path: "src/data/content",      status: "M" },
+  { name: "리틀뱅크.md",   path: "src/data/content/projects", status: "M" },
+  { name: "DEVHUB.md",    path: "src/data/content/projects", status: "M" },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
@@ -247,6 +246,7 @@ export default function GitPanel() {
               </span>
             </div>
           ))}
+          <div className="h-3" />
         </div>
       </div>
 
