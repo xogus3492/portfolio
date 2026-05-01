@@ -33,7 +33,7 @@ function SettingsMenu() {
   return (
     <div ref={ref} className="relative">
       {open && (
-        <div className="absolute bottom-full left-full mb-1 ml-1 w-44 bg-vs-sidebar border border-vs-border-subtle rounded shadow-lg z-50 py-1 text-sm text-vs-text">
+        <div className="absolute bottom-0 left-full ml-1 w-44 bg-vs-sidebar border border-vs-border-subtle rounded z-50 py-1 text-sm text-vs-text shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
           <div className="px-3 py-1.5 text-xs text-vs-text-muted uppercase tracking-widest font-semibold">
             Language
           </div>
