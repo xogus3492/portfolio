@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { FileNode } from "@/types";
 import { useEditorStore } from "@/store/editorStore";
+import { useUIStore } from "@/store/uiStore";
 import { cn } from "@/lib/utils";
 import FileIcon from "./FileIcon";
 import { useDelayedTooltip } from "@/hooks/useDelayedTooltip";
@@ -20,10 +21,12 @@ interface FileTreeNodeProps {
 function FileTreeNode({ node, depth }: FileTreeNodeProps) {
   const { expandedFolders, activeTabId, toggleFolder, openFile, pinTab } =
     useEditorStore();
+  const { language } = useUIStore();
   const { tooltip, onMouseEnter, onMouseLeave } = useDelayedTooltip();
 
   const isExpanded = expandedFolders.has(node.id);
   const isActive = activeTabId === node.id;
+  const displayName = language === "en" ? (node.nameEn ?? node.name) : node.name;
 
   const paddingLeft = 8 + depth * 12;
 
@@ -52,7 +55,7 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
               <Folder size={16} className="text-vs-text-muted" />
             )}
           </span>
-          <span className="truncate">{node.name}</span>
+          <span className="truncate">{displayName}</span>
         </button>
 
         {isExpanded && node.children && (
@@ -80,7 +83,7 @@ function FileTreeNode({ node, depth }: FileTreeNodeProps) {
         style={{ paddingLeft: paddingLeft + 20 }}
       >
         <FileIcon id={node.id} language={node.language} iconUrl={node.iconUrl} size={15} />
-        <span className="truncate">{node.name}</span>
+        <span className="truncate">{displayName}</span>
       </button>
 
       {tooltip.visible && (

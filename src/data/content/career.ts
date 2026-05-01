@@ -57,7 +57,7 @@ export default CAREER_CONTENT;
 
 export const CAREER_CONTENT_EN = `## Hyundai Department Store App/Web Platform Development
 
-**Company:** PlayTogether | **Period:** 2025.04 ~ Present | **Position:** Junior / Developer
+**Company:** 플레이투게더 | **Period:** 2025.04 ~ Present | **Position:** Junior / Developer
 
 &nbsp;
 

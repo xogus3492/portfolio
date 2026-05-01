@@ -50,13 +50,15 @@ function TypingAnimation({ language }: { language: "ko" | "en" }) {
 
 interface QuickLinkProps {
   node: FileNode;
+  language: "ko" | "en";
 }
 
-function QuickLink({ node }: QuickLinkProps) {
+function QuickLink({ node, language }: QuickLinkProps) {
   const { openFile } = useEditorStore();
 
   const parts = node.id.split("/");
   const folderName = parts.length > 1 ? parts[0] : null;
+  const displayName = language === "en" ? (node.nameEn ?? node.name) : node.name;
 
   return (
     <button
@@ -71,7 +73,7 @@ function QuickLink({ node }: QuickLinkProps) {
             <span className="text-vs-text-dim">/</span>
           </>
         )}
-        <span className="text-vs-link truncate">{node.name}</span>
+        <span className="text-vs-link truncate">{displayName}</span>
       </span>
     </button>
   );
@@ -127,7 +129,7 @@ export default function WelcomeTab() {
             </h2>
             <div className="flex flex-col gap-0.5">
               {allFiles.map((file) => (
-                <QuickLink key={file.id} node={file} />
+                <QuickLink key={file.id} node={file} language={language} />
               ))}
             </div>
           </div>

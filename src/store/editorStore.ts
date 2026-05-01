@@ -33,6 +33,7 @@ export const useEditorStore = create<EditorState>()((set) => ({
       const newTab: EditorTab = {
         id: node.id,
         name: node.name,
+        nameEn: node.nameEn,
         language: node.language ?? "plaintext",
         content: node.content!,
         contentEn: node.contentEn,

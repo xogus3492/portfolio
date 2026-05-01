@@ -22,6 +22,7 @@ export const FILE_TREE: FileNode[] = [
   {
     id: "자기소개.md",
     name: "자기소개.md",
+    nameEn: "self-intro.md",
     type: "file",
     language: "markdown",
     content: SELF_INTRO_CONTENT,
@@ -35,6 +36,7 @@ export const FILE_TREE: FileNode[] = [
       {
         id: "career/플레이투게더(25.04~재직중).md",
         name: "플레이투게더(25.04~재직중).md",
+        nameEn: "플레이투게더(25.04~present).md",
         type: "file",
         language: "markdown",
         content: CAREER_CONTENT,
@@ -111,6 +113,7 @@ export const FILE_TREE: FileNode[] = [
       {
         id: "skills/기술스택.md",
         name: "기술스택.md",
+        nameEn: "skills.md",
         type: "file",
         language: "markdown",
         content: SKILLS_CONTENT,
@@ -126,6 +129,7 @@ export const FILE_TREE: FileNode[] = [
       {
         id: "certificate/자격증.md",
         name: "자격증.md",
+        nameEn: "certificate.md",
         type: "file",
         language: "markdown",
         content: CERTIFICATE_CONTENT,

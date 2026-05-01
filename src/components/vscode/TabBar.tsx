@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { X } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
+import { useUIStore } from "@/store/uiStore";
 import { EditorTab } from "@/types";
 import { cn } from "@/lib/utils";
 import FileIcon from "./FileIcon";
@@ -15,7 +16,9 @@ interface TabItemProps {
 
 function TabItem({ tab, isActive }: TabItemProps) {
   const { setActiveTab, closeTab, pinTab } = useEditorStore();
+  const { language } = useUIStore();
   const { tooltip, onMouseEnter, onMouseLeave } = useDelayedTooltip();
+  const displayName = language === "en" ? (tab.nameEn ?? tab.name) : tab.name;
 
   return (
     <>
@@ -40,7 +43,7 @@ function TabItem({ tab, isActive }: TabItemProps) {
             tab.isPreview && "italic"
           )}
         >
-          {tab.name}
+          {displayName}
         </span>
         <button
           onClick={(e) => {

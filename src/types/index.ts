@@ -3,6 +3,7 @@ export type FileNodeType = "file" | "folder";
 export interface FileNode {
   id: string;
   name: string;
+  nameEn?: string;
   type: FileNodeType;
   language?: string;
   content?: string;
@@ -14,6 +15,7 @@ export interface FileNode {
 export interface EditorTab {
   id: string;
   name: string;
+  nameEn?: string;
   language: string;
   content: string;
   contentEn?: string;

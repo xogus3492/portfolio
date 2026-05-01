@@ -55,25 +55,25 @@ I strive for an environment that allows broad experience and continuous growth.
 
 | Period | Company | Position |
 |--------|---------|----------|
-| 2025.04 ~ Present | PlayTogether | Junior / Developer |
+| 2025.04 ~ Present | 플레이투게더 | Junior / Developer |
 
 ## Education
 
 | Period | Institution | Major |
 |--------|------------|-------|
-| 2021.03 ~ 2023.02 | Dongyang Mirae University | Computer Information Engineering |
+| 2021.03 ~ 2023.02 | 동양미래대학교 | Computer Information Engineering |
 
 ## Contact
 
-| | |
-|---|---|
+| Item | Content |
+|------|---------|
 | 📧 Email | wkdxogus3492@gmail.com |
 | 📱 Phone | [010-6743-4320](tel:010-6743-4320) |
 
 ## Links
 
-| | |
-|---|---|
+| Platform | Link |
+|----------|------|
 | GitHub | [![](/icons/github.svg) xogus3492](https://github.com/xogus3492) |
 | Tistory | [![](/icons/tistory.svg) taehyeon-stroy.tistory.com](https://taehyeon-stroy.tistory.com) |
 `;
