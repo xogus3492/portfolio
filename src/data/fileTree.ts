@@ -1,6 +1,7 @@
 import { FileNode } from "@/types";
 import SELF_INTRO_CONTENT from "./content/self_intro";
 import {
+  RUNDOMMATE_CONTENT,
   REHAB_CENTER_CONTENT,
   LITTLE_BANK_CONTENT,
   DEVHUB_CONTENT,
@@ -38,6 +39,14 @@ export const FILE_TREE: FileNode[] = [
     name: "Projects",
     type: "folder",
     children: [
+      {
+        id: "projects/런덤메이트.md",
+        name: "런덤메이트.md",
+        type: "file",
+        language: "markdown",
+        content: RUNDOMMATE_CONTENT,
+        iconUrl: "/icons/rdm-icon.png",
+      },
       {
         id: "projects/리틀뱅크.md",
         name: "리틀뱅크.md",

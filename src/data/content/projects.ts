@@ -1,3 +1,225 @@
+export const RUNDOMMATE_CONTENT = `# <img src="/icons/rdm-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 런덤메이트 (RUNDOMMATE)
+
+**기간:** 2025.02 ~ 진행중 &nbsp;&nbsp; **유형:** 팀 프로젝트 &nbsp;&nbsp; **상태:** 🚀 출시 예정
+
+## 팀 구성 & 역할
+
+| 구성 | 역할 |
+|------|------|
+| App 2명, Back-end 1명, Design 1명 | **Full-stack (Infra · Backend · Web)** |
+
+## 서비스 소개
+
+> **런덤메이트**는 러너들이 크루를 만들고, 함께 달리며 성장할 수 있는 러닝 커뮤니티 플랫폼입니다.
+>
+> GPS 기반 코스 추천, 실시간 위치 공유, 크루 피드, 채팅 등 러닝 라이프사이클 전반을 지원하며 현재 출시를 준비 중입니다.
+
+## 기술 스택
+
+| 영역 | 기술 |
+|------|------|
+| Backend | Java 17, Spring Boot 3.4, Spring Security, JPA, PostGIS |
+| Database | PostgreSQL 16, Redis |
+| Infra | AWS (ECS Fargate, RDS, ElastiCache, ALB, ECR, Route53, Secrets Manager) |
+| IaC | Terraform (dev / prod 환경 분리) |
+| CI/CD | GitHub Actions |
+| Real-time | WebSocket (STOMP), FCM |
+| Web Admin | Next.js 16, TypeScript, Tailwind CSS v4, Zustand, Recharts |
+
+---
+
+## 인프라 — Terraform IaC로 AWS 풀스택 설계
+
+직접 설계한 AWS 아키텍처를 Terraform으로 코드화하여 dev / prod 두 환경을 선언적으로 관리합니다.
+
+### VPC 네트워크 설계
+
+환경별 네트워크 전략을 다르게 가져갔습니다.
+개발 환경은 비용 절감을 위해 Public 서브넷에 ECS를 배치하고 NAT Gateway를 제거했고,
+프로덕션은 ECS를 Private 서브넷에 격리하고 VPC Endpoints를 통해 NAT 데이터 전송 비용을 절감했습니다.
+
+\`\`\`hcl
+# infra/server/vpc.tf
+resource "aws_subnet" "private" {
+  count             = length(var.availability_zones)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones))
+  availability_zone = var.availability_zones[count.index]
+}
+
+# Prod: ECR 이미지 pull 시 NAT 우회 → 데이터 전송 비용 절감
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  count               = var.enable_vpc_endpoints ? 1 : 0
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.\${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}
+\`\`\`
+
+### ECS Fargate + Auto Scaling
+
+컨테이너 기반 무중단 배포 환경을 구성했습니다.
+CPU / Memory 임계치 기반으로 태스크를 2~10개 사이에서 자동 스케일링합니다.
+
+\`\`\`hcl
+# infra/server/ecs.tf
+resource "aws_appautoscaling_policy" "cpu" {
+  name               = "\${local.prefix}-cpu-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value = 70.0
+  }
+}
+\`\`\`
+
+### CI/CD — GitHub Actions → ECR → ECS 무중단 배포
+
+\`server/**\` 경로 변경이 감지되면 자동으로 빌드 → 이미지 푸시 → ECS 롤링 업데이트가 진행됩니다.
+민감 정보는 GitHub Secrets에서 AWS Secrets Manager로 이관하여 코드 노출을 방지했습니다.
+
+\`\`\`yaml
+# .github/workflows/deploy-dev.yml
+jobs:
+  deploy:
+    steps:
+      - name: Build & Push to ECR
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: kosmo-dev-backend-service
+          cluster: kosmo-dev-cluster
+          wait-for-service-stability: true
+\`\`\`
+
+#### 인프라 Terraform Plan도 자동화
+\`infra/**\` 변경 시 GitHub Actions가 \`terraform plan\`을 실행하고 결과를 PR 코멘트로 표시합니다.
+PR 머지 시에만 \`terraform apply\`가 실행되어 인프라 변경을 리뷰 기반으로 제어합니다.
+
+---
+
+## 백엔드 — Spring Boot 기반 러닝 플랫폼
+
+### Docker 멀티스테이지 빌드
+
+빌드 환경과 실행 환경을 분리해 최종 이미지 크기를 최소화했습니다.
+non-root 사용자로 실행하여 컨테이너 보안을 강화했습니다.
+
+\`\`\`dockerfile
+FROM eclipse-temurin:17-jdk AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew clean build -x test
+
+FROM eclipse-temurin:17-jre
+RUN addgroup --system spring && adduser --system spring --ingroup spring
+USER spring:spring
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:8000/api/health || exit 1
+COPY --from=builder /app/build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+\`\`\`
+
+### PostGIS 기반 위치 서비스
+
+일반 RDB 대신 PostgreSQL PostGIS 확장을 활용해 GPS 기반 코스 검색과
+실시간 위치 계산을 데이터베이스 레벨에서 처리합니다.
+
+### WebSocket 실시간 채팅
+
+STOMP 프로토콜로 채팅을 구현하고, CONNECT 단계에서 JWT를 검증합니다.
+단일 인스턴스에서는 Simple Broker를 사용하고, 다중 인스턴스 환경에서는
+RabbitMQ STOMP Relay로 전환할 수 있도록 환경변수 기반 브로커 모드 전환 구조를 설계했습니다.
+
+### JWT + Redis 토큰 블랙리스트
+
+로그아웃 시 토큰을 Redis에 블랙리스트로 등록하고 요청마다 검사합니다.
+Kakao · Google · Naver OAuth2 소셜 로그인도 함께 지원합니다.
+
+### 데이터베이스 마이그레이션 (Flyway)
+
+V1~V28 마이그레이션 스크립트로 스키마 변경 이력을 관리합니다.
+TMS 전체 테이블(V28)도 마이그레이션 단위로 분리하여 배포 안전성을 확보했습니다.
+
+---
+
+## 어드민 시스템 — 운영 관리 대시보드
+
+Next.js App Router로 구축한 백오피스 웹 서비스입니다.
+
+### 실시간 대시보드
+
+Recharts 기반 차트로 서비스 현황을 한눈에 파악할 수 있습니다.
+
+- **KPI 카드**: 활성 사용자, 신규 크루, 러닝 세션, 미처리 신고 건수
+- **주간 활동 추이**: Area Chart (게시글 / 크루 / 러닝 세션)
+- **권한별 사용자 분포**: Pie Chart
+- **최근 관리 작업 로그**: 5건 요약 + 전체 보기
+
+### 콘텐츠 & 사용자 관리
+
+| 기능 | 설명 |
+|------|------|
+| 신고 관리 | 신고 목록 필터링, 상세 조회, 처리(승인/거절) |
+| 게시글/댓글 | 부적절 콘텐츠 삭제, 신고 내역 연동 |
+| 크루 관리 | 크루 승인/거절, 멤버 관리 |
+| 달리기 관리 | 활성 러닝 세션 모니터링, 비정상 활동 감지 |
+| 대회 관리 | Selenium 자동 크롤링 데이터 검증 및 승인 |
+
+### 메일 발송 시스템
+
+- 마크다운 기반 이메일 템플릿 CRUD
+- 사용자 조건 필터링 후 대량 발송
+- 발송 이력 조회 (성공 / 실패 통계)
+
+---
+
+## TMS — 테스트 관리 시스템
+
+팀 내 QA 프로세스를 체계화하기 위해 백엔드와 웹을 함께 직접 설계·구현한 사내 테스트 관리 도구입니다.
+
+### 프로젝트 & 멤버 관리
+
+프로젝트 단위로 테스트 활동을 격리합니다.
+OWNER / MANAGER / TESTER / VIEWER 4가지 역할로 접근 권한을 제어합니다.
+
+### 테스트 계획 & 케이스
+
+\`\`\`
+테스트 계획 (TestPlan)
+  └─ 테스트 케이스 (TestCase)
+       └─ 테스트 실행 (TestExecution)
+            └─ 결과: PASSED / FAILED / BLOCKED / SKIPPED
+\`\`\`
+
+### 결함 추적 (Defect Tracking)
+
+- **우선순위**: HIGH / MEDIUM / LOW
+- **심각도**: CRITICAL / MAJOR / MINOR / TRIVIAL
+- **상태 흐름**: OPEN → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED (REOPENED 포함)
+- **첨부파일**: S3 업로드 연동 (스크린샷, 로그)
+- **코멘트 스레드 & 변경 이력**: 모든 상태 변경을 이력으로 추적
+
+### TMS 대시보드
+
+- 프로젝트별 테스트 진행률
+- 결함 밀도 (Open / Resolved / Closed 비율)
+- 테스트 커버리지
+- 팀 멤버별 결함 할당 현황
+`;
+
 export const REHAB_CENTER_CONTENT = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
 
 **기간:** 2026.01 ~ 진행중 &nbsp;&nbsp; **유형:** 개인 프로젝트 (외주)
