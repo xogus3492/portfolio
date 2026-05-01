@@ -24,9 +24,9 @@ interface ChangedFile {
 }
 
 const CHANGED_FILES: ChangedFile[] = [
-  { name: "자기소개.md",   path: "src/data/content",      status: "M" },
-  { name: "리틀뱅크.md",   path: "src/data/content/projects", status: "M" },
-  { name: "DEVHUB.md",    path: "src/data/content/projects", status: "M" },
+  { name: "자기소개.md", path: "",         status: "M" },
+  { name: "리틀뱅크.md", path: "Projects", status: "M" },
+  { name: "DEVHUB.md",  path: "Projects", status: "M" },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
