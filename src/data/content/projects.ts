@@ -805,7 +805,7 @@ The entire flow from defect registration to resolution confirmation is managed i
 A status change history is automatically recorded at each step so you can track who changed what and when.
 `;
 
-export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
+export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지 (Rehab Center Website)
 
 **Period:** 2026.01 ~ Present &nbsp;&nbsp; **Type:** Individual Project (Freelance)
 
@@ -1151,7 +1151,7 @@ Experienced connecting RDS and deploying a Spring Boot project on EC2 with Docke
 - [![](/icons/notion.png) Project Version Control Service DEVHUB](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
-export const BOARD_CONTENT_EN = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 게시판 프로젝트
+export const BOARD_CONTENT_EN = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 게시판 프로젝트 (Board Project)
 
 **Period:** 2023.03 ~ 2023.05 &nbsp;&nbsp; **Type:** Team Project
 
