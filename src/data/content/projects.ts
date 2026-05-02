@@ -219,7 +219,7 @@ export const LITTLE_BANK_CONTENT = `# <img src="/icons/littlebank-icon.png" styl
 
 | 구성 | 역할 |
 |------|------|
-| App(PM) 1명, Back-end 2명, Design 1명 | **Back-end, PL** |
+| App(PM) 1명, Back-end 2명, Design 1명 | **Back-end, Project Leader** |
 
 ## 서비스 소개
 
@@ -476,7 +476,7 @@ export const DEVHUB_CONTENT = `# <img src="/icons/devhub-icon.png" style="displa
 
 | 구성 | 역할 |
 |------|------|
-| Front-end 2명, Back-end 3명 | **Back-end, PL** |
+| Front-end 2명, Back-end 3명 | **Back-end, Project Leader** |
 
 ## 기술 스택
 
@@ -488,7 +488,7 @@ export const DEVHUB_CONTENT = `# <img src="/icons/devhub-icon.png" style="displa
 
 ## 팀에서의 역할
 
-1.PL을 맡아 팀원들의 코드를 피드백하고 GitHub를 활용하여 코드를 병합하는 업무를 담당했습니다.
+1.Project Leader를 맡아 팀원들의 코드를 피드백하고 GitHub를 활용하여 코드를 병합하는 업무를 담당했습니다.
 
 2.프로젝트의 핵심 서비스인 형상관리 기능을 설계하고 개발하는 일을 담당했습니다.
 
@@ -838,7 +838,7 @@ export const LITTLE_BANK_CONTENT_EN = `# <img src="/icons/littlebank-icon.png" s
 
 | Composition | Role |
 |-------------|------|
-| App(PM) ×1, Back-end ×2, Design ×1 | **Back-end, PL** |
+| App(PM) ×1, Back-end ×2, Design ×1 | **Back-end, Project Leader** |
 
 ## Service Overview
 
@@ -1088,7 +1088,7 @@ export const DEVHUB_CONTENT_EN = `# <img src="/icons/devhub-icon.png" style="dis
 
 | Composition | Role |
 |-------------|------|
-| Front-end ×2, Back-end ×3 | **Back-end, PL** |
+| Front-end ×2, Back-end ×3 | **Back-end, Project Leader** |
 
 ## Tech Stack
 
@@ -1100,7 +1100,7 @@ export const DEVHUB_CONTENT_EN = `# <img src="/icons/devhub-icon.png" style="dis
 
 ## Team Contributions
 
-1. As PL, I reviewed teammates' code and managed code merging via GitHub.
+1. As Project Leader, I reviewed teammates' code and managed code merging via GitHub.
 
 2. I designed and developed the core version control feature of the project.
 
