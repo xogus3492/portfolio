@@ -619,7 +619,7 @@ export const FYB_CONTENT = `# <img src="/icons/fyb-icon.png" style="display:inli
 - [![](/icons/notion.png) 맞춤형 쇼핑몰 추천 서비스 FYB](https://wheat-eustoma-8a4.notion.site/FYB-1402cd91589f4e5fb177c0e85b31d4c1)
 `;
 
-export const RUNDOMMATE_CONTENT_EN = `# <img src="/icons/rdm-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> RUNDOMMATE
+export const RUNDOMMATE_CONTENT_EN = `# <img src="/icons/rdm-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 런덤메이트 (RUNDOMMATE)
 
 **Period:** 2026.02 ~ Present &nbsp;&nbsp; **Type:** Team Project &nbsp;&nbsp; **Launch:** Q3 2026
 
@@ -805,7 +805,7 @@ The entire flow from defect registration to resolution confirmation is managed i
 A status change history is automatically recorded at each step so you can track who changed what and when.
 `;
 
-export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> Rehab Center Website
+export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 재활센터 홈페이지
 
 **Period:** 2026.01 ~ Present &nbsp;&nbsp; **Type:** Individual Project (Freelance)
 
@@ -830,7 +830,7 @@ export const REHAB_CENTER_CONTENT_EN = `# <img src="/icons/house-icon.png" style
 - 🌐 [Live Site](https://sm-rehabilitation-center.vercel.app/)
 `;
 
-export const LITTLE_BANK_CONTENT_EN = `# <img src="/icons/littlebank-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> LittleBank
+export const LITTLE_BANK_CONTENT_EN = `# <img src="/icons/littlebank-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 리틀뱅크 (LittleBank)
 
 **Period:** 2025.03 ~ 2025.07 &nbsp;&nbsp; **Type:** Team Project
 
@@ -1151,7 +1151,7 @@ Experienced connecting RDS and deploying a Spring Boot project on EC2 with Docke
 - [![](/icons/notion.png) Project Version Control Service DEVHUB](https://wheat-eustoma-8a4.notion.site/DEVHUB-40f17eb25bf84bd8ba87caa17c444d2b)
 `;
 
-export const BOARD_CONTENT_EN = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> Board Project
+export const BOARD_CONTENT_EN = `# <img src="/icons/board-icon.png" style="display:inline;height:1em;vertical-align:middle;margin-right:0.35em;" /> 게시판 프로젝트
 
 **Period:** 2023.03 ~ 2023.05 &nbsp;&nbsp; **Type:** Team Project
 
